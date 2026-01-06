@@ -3,14 +3,14 @@ import {getCustomer} from "@api/tiendanube/customer.js";
 import {databaseDate} from "@/lib/string/date.js";
 
 const postCustomer: RouteHandlerMethod = async (request, reply) => {
-	const {id, event} = request.body as any
+	const {id} = request.body as any
 	
 	try {
 		const data = await getCustomer(id)
 		
-		if (event != 'customer/created') return reply.status(404).send({
+		if (!data.identification) return reply.status(404).send({
 			success: false,
-			error: 'Event is not "created"'
+			error: 'Customer has no identification (CPF/CNPJ)'
 		})
 		if (!data) return reply.status(404).send({
 			success: false,
