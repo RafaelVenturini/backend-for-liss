@@ -3,7 +3,6 @@ import {getCustomer} from "@api/tiendanube/customer.js";
 import {databaseDate} from "@/lib/string/date.js";
 
 const postCustomer: RouteHandlerMethod = async (request, reply) => {
-	const start = new Date()
 	const {id, event} = request.body as any
 	
 	try {

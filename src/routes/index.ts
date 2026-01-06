@@ -3,4 +3,8 @@ import webhookRoutes from "./webhook/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
 	app.register(webhookRoutes, {prefix: '/webhook'})
+	
+	app.get('/', async () => {
+		return {server: 'alive'}
+	})
 }
