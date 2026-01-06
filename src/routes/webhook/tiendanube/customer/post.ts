@@ -33,7 +33,7 @@ const postCustomer: RouteHandlerMethod = async (request, reply) => {
 		
 		await request.server.db.fitness.execute(sql, insert)
 		
-		return reply.status(201).send({data})
+		return reply.status(201).send({data: insert})
 	} catch (e) {
 		return reply.status(500).send({error: e})
 	}
