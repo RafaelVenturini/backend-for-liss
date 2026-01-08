@@ -13,16 +13,22 @@ import {
 	insertCustomerSql,
 	insertOrderProductSql,
 	insertOrderSql,
+	insertProductSql,
 	selectAddressSql
 } from "@plugins/sql.js";
 import {databaseDate} from "@/lib/string/date.js";
 import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
+import {OneProduct} from "@api/tiny/interfaces.js";
+import {segmentOfSku} from "@/lib/objects/segment-of-sku.js";
+import {tinyAnexos} from "@/lib/string/products.js";
 
 async function databasePlugin(fastify: FastifyInstance) {
 	const fitnessPool = createPool(appConfig.databases.fitness)
 	const fashionPool = createPool(appConfig.databases.fashion)
 	const toolPool = createPool(appConfig.databases.tools)
-	
+	///
+	/// Fitness Query's
+	///
 	const insertFitnessCustomer = async (customer: InsertFitUser) => {
 		const {
 			cliente_id,
@@ -99,9 +105,23 @@ async function databasePlugin(fastify: FastifyInstance) {
 		}
 	}
 	
-	// const insertFitnessProduct = async (product: OneProduct) => {
-	//
-	// }
+	const insertFitnessProduct = async (product: OneProduct) => {
+		const {id, nome, codigo, preco, anexos} = product
+		const x = segmentOfSku(codigo, nome)
+		if (x === null) return
+		const insert = [id, databaseDate(new Date()), nome, codigo, preco, x.blu, x.inf, x.top, x.tec, x.tam, x.cor, x.mul, tinyAnexos(anexos)]
+		
+		fitnessPool.execute(insertProductSql, insert)
+	}
+	
+	///
+	/// Fashion Query's
+	///
+	
+	
+	///
+	/// Tools Query's
+	///
 	
 	fastify.decorate('insertFitnessOrderProducts', insertFitnessOrderProducts)
 	
@@ -113,6 +133,7 @@ async function databasePlugin(fastify: FastifyInstance) {
 		insertFitnessAddress,
 		insertFitnessOrder,
 		insertFitnessOrderProducts,
+		insertFitnessProduct,
 	})
 	
 	fastify.addHook('onClose', async () => {
@@ -131,6 +152,7 @@ declare module 'fastify' {
 			insertFitnessAddress: (address: InsertFitAddress) => Promise<any>;
 			insertFitnessOrder: (order: InsertFitOrder) => Promise<any>;
 			insertFitnessOrderProducts: (products: TiendanubeProduct[], pedido_id: number) => Promise<any>;
+			insertFitnessProduct: (product: OneProduct) => Promise<any>;
 		};
 	}
 }

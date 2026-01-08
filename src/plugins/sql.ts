@@ -70,8 +70,8 @@ export const deleteOrderProductSql = `
 export const insertProductSql = `
     INSERT INTO produto(tiny_id, criacao, nome, sku, preco, blu_id, inf_id,
                         top_id,
-                        tec_id, tamanho, cor_id, mul_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE ${onDuplicatedKeyUpdate(["criacao", "nome", "sku", "preco", "blu_id",
-        "inf_id", "top_id", "tec_id", "tamanho", "cor_id", "mul_id",])}
+                        tec_id, tamanho, cor_id, mul_id, img)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ${onDuplicatedKeyUpdate(["nome", "sku", "preco", "blu_id",
+                "inf_id", "top_id", "tec_id", "tamanho", "cor_id", "mul_id", "img"])}
 `
