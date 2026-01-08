@@ -1,6 +1,5 @@
 import {RouteHandlerMethod} from "fastify";
 import {getCustomer} from "@api/tiendanube/customer.js";
-import {databaseDate} from "@/lib/string/date.js";
 
 const postCustomer: RouteHandlerMethod = async (request, reply) => {
 	const {id} = request.body as any
@@ -16,24 +15,17 @@ const postCustomer: RouteHandlerMethod = async (request, reply) => {
 			success: false,
 			error: 'Customer not found'
 		})
+		const insert = {
+			cliente_id: data.identification,
+			nome: data.name,
+			dia_cadastro: data.created_at,
+			telefone: data.phone,
+			nuvem_id: data.id,
+			email: data.email
+		}
+		await request.server.db.insertFitnessCustomer(insert)
 		
-		const sql = `
-            INSERT INTO cliente(cliente_id,
-                                nome,
-                                dia_cadastro,
-                                telefone,
-                                email,
-                                nuvem_id)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE nome     = VALUES(nome),
-                                    telefone = VALUES(telefone),
-                                    email    = VALUES(email)
-		`
-		const insert = [data.identification, data.name, databaseDate(data.created_at), data.phone, data.email, data.id]
-		
-		await request.server.db.fitness.execute(sql, insert)
-		
-		return reply.status(201).send({data: insert})
+		return reply.status(201).send({data})
 	} catch (e) {
 		return reply.status(500).send({error: e})
 	}
