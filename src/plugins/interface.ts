@@ -1,3 +1,5 @@
+import {RowDataPacket} from "mysql2/promise";
+
 export interface InsertFitUser {
 	cliente_id: string;
 	nome: string;
@@ -37,4 +39,8 @@ export interface InsertFitOrder {
 	bandeira: string;
 	parcelamento: string;
 	status: string;
+}
+
+export interface fixImgResult extends RowDataPacket {
+	tiny_id: number
 }

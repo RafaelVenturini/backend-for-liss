@@ -8,6 +8,10 @@ export function segmentOfSku(sku: string, name: string) {
 	if (!isNaN(Number(sku))) return null
 	const skuSegments = sku.split('-')
 	if (skuSegments.length < 2) return null
+	const skuLen = sku.length
+	if (sku[skuLen - 1] === '-') return null
+	if (sku.includes(' ')) return null
+	if (sku.includes('--')) return null
 	
 	let blu = null
 	let inf = null

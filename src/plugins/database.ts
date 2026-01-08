@@ -1,8 +1,9 @@
 import fp from 'fastify-plugin';
-import {createPool, Pool} from "mysql2/promise";
+import {createPool, Pool, ResultSetHeader} from "mysql2/promise";
 import {appConfig} from "@config";
 import {FastifyInstance} from "fastify";
 import {
+	fixImgResult,
 	InsertFitAddress,
 	InsertFitOrder,
 	InsertFitUser
@@ -14,13 +15,16 @@ import {
 	insertOrderProductSql,
 	insertOrderSql,
 	insertProductSql,
-	selectAddressSql
+	selectAddressSql,
+	selectBrokenImgSql,
+	selectProductSql
 } from "@plugins/sql.js";
 import {databaseDate} from "@/lib/string/date.js";
 import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
 import {OneProduct} from "@api/tiny/interfaces.js";
 import {segmentOfSku} from "@/lib/objects/segment-of-sku.js";
 import {tinyAnexos} from "@/lib/string/products.js";
+import {QueryResult} from "mysql2";
 
 async function databasePlugin(fastify: FastifyInstance) {
 	const fitnessPool = createPool(appConfig.databases.fitness)
@@ -41,7 +45,12 @@ async function databasePlugin(fastify: FastifyInstance) {
 		
 		const insert = [cliente_id, nome, databaseDate(dia_cadastro), telefone, email, nuvem_id]
 		
-		return fitnessPool.execute(insertCustomerSql, insert);
+		try {
+			return fitnessPool.execute(insertCustomerSql, insert);
+		} catch (e) {
+			console.log(e)
+			return {error: e}
+		}
 	}
 	
 	const insertFitnessAddress = async (address: InsertFitAddress) => {
@@ -63,9 +72,14 @@ async function databasePlugin(fastify: FastifyInstance) {
 		if (select.length === 1) return select[0].endereco_id
 		const insert = [cliente_id, cep, rua, numero, complemento, bairro, cidade, estado, pais, databaseDate(criacao)]
 		
-		const [inserted] = await fitnessPool.execute(insertAddresSql, insert)
-		// @ts-ignore
-		return inserted[0].endereco_id
+		try {
+			const [inserted] = await fitnessPool.execute<ResultSetHeader>(insertAddresSql, insert)
+			
+			return inserted.insertId
+		} catch (e) {
+			console.log(e)
+			return {error: e}
+		}
 	}
 	
 	const insertFitnessOrder = async (order: InsertFitOrder) => {
@@ -106,14 +120,34 @@ async function databasePlugin(fastify: FastifyInstance) {
 	}
 	
 	const insertFitnessProduct = async (product: OneProduct) => {
+		
 		const {id, nome, codigo, preco, anexos} = product
 		const x = segmentOfSku(codigo, nome)
 		if (x === null) return
 		const insert = [id, databaseDate(new Date()), nome, codigo, preco, x.blu, x.inf, x.top, x.tec, x.tam, x.cor, x.mul, tinyAnexos(anexos)]
 		
-		fitnessPool.execute(insertProductSql, insert)
+		try {
+			fitnessPool.execute(insertProductSql, insert)
+		} catch (e) {
+			console.log(e)
+			return {error: e}
+		}
 	}
 	
+	const selectFitnessProduct = async (tinyId: string | null, sku: string | null) => {
+		if (!tinyId && !sku) return null
+		if (!tinyId) tinyId = null
+		if (!sku) sku = null
+		
+		const [rows] = await fitnessPool.execute(selectProductSql, [tinyId, sku])
+		
+		return rows
+	}
+	
+	const selectFitnessBrokenImg = async (): Promise<fixImgResult[]> => {
+		const [rows] = await fitnessPool.execute<fixImgResult[]>(selectBrokenImgSql)
+		return rows
+	}
 	///
 	/// Fashion Query's
 	///
@@ -134,6 +168,8 @@ async function databasePlugin(fastify: FastifyInstance) {
 		insertFitnessOrder,
 		insertFitnessOrderProducts,
 		insertFitnessProduct,
+		selectFitnessProduct,
+		selectFitnessBrokenImg
 	})
 	
 	fastify.addHook('onClose', async () => {
@@ -153,6 +189,8 @@ declare module 'fastify' {
 			insertFitnessOrder: (order: InsertFitOrder) => Promise<any>;
 			insertFitnessOrderProducts: (products: TiendanubeProduct[], pedido_id: number) => Promise<any>;
 			insertFitnessProduct: (product: OneProduct) => Promise<any>;
+			selectFitnessProduct: (tinyId: string | null, sku: string | null) => Promise<QueryResult | null>;
+			selectFitnessBrokenImg: () => Promise<QueryResult | null>;
 		};
 	}
 }

@@ -3,6 +3,9 @@ import {segmentOfSku} from "@/lib/objects/segment-of-sku.js";
 
 test.each([
 	{sku: '', name: "", expected: null},
+	{sku: 'LBO-TSI-COM-TU-', name: "", expected: null},
+	{sku: 'LBO--COM-TU-', name: "", expected: null},
+	{sku: 'LBO- -COM-TU-', name: "", expected: null},
 	{sku: 'LBO-TSI-COM-TU-113', name: "", expected: null},
 	{
 		sku: '',
