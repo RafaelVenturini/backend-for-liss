@@ -3,6 +3,7 @@ import {createPool, Pool, ResultSetHeader} from "mysql2/promise";
 import {appConfig} from "@config";
 import {FastifyInstance} from "fastify";
 import {
+	ClothsResult,
 	fixImgResult,
 	InsertFitAddress,
 	InsertFitOrder,
@@ -11,12 +12,16 @@ import {
 import {
 	deleteOrderProductSql,
 	insertAddresSql,
+	insertColorSql,
 	insertCustomerSql,
+	insertMultColorSql,
 	insertOrderProductSql,
 	insertOrderSql,
 	insertProductSql,
 	selectAddressSql,
 	selectBrokenImgSql,
+	selectClothSql,
+	selectLastColorSql,
 	selectProductSql
 } from "@plugins/sql.js";
 import {databaseDate} from "@/lib/string/date.js";
@@ -127,7 +132,7 @@ async function databasePlugin(fastify: FastifyInstance) {
 		const insert = [id, databaseDate(new Date()), nome, codigo, preco, x.blu, x.inf, x.top, x.tec, x.tam, x.cor, x.mul, tinyAnexos(anexos)]
 		
 		try {
-			fitnessPool.execute(insertProductSql, insert)
+			await fitnessPool.execute(insertProductSql, insert)
 		} catch (e) {
 			console.log(e)
 			return {error: e}
@@ -146,6 +151,31 @@ async function databasePlugin(fastify: FastifyInstance) {
 	
 	const selectFitnessBrokenImg = async (): Promise<fixImgResult[]> => {
 		const [rows] = await fitnessPool.execute<fixImgResult[]>(selectBrokenImgSql)
+		return rows
+	}
+	
+	const selectFitnessCloths = async (): Promise<ClothsResult[] | null> => {
+		const [rows] = await fitnessPool.execute<ClothsResult[]>(selectClothSql)
+		return rows
+	}
+	
+	const insertFitnessColor = async (name: string, sku: number) => {
+		const solid = name.includes('Bicolor') || name.includes('Tricolor')
+		try {
+			if (solid) await fitnessPool.execute(insertColorSql, [sku, name, databaseDate(new Date())])
+			else await fitnessPool.execute(insertMultColorSql, [sku, name, databaseDate(new Date())])
+		} catch (e: any) {
+			if (e.code === 'ER_DUP_ENTRY') {
+				console.log('Tentativa de adicionar cor já existente')
+				return {error: 'Color already exists'}
+			}
+			console.log(e)
+			return {error: e}
+		}
+	}
+	
+	const selectLastColor = async () => {
+		const [rows] = await fitnessPool.execute(selectLastColorSql)
 		return rows
 	}
 	///
@@ -169,7 +199,10 @@ async function databasePlugin(fastify: FastifyInstance) {
 		insertFitnessOrderProducts,
 		insertFitnessProduct,
 		selectFitnessProduct,
-		selectFitnessBrokenImg
+		selectFitnessBrokenImg,
+		selectFitnessCloths,
+		insertFitnessColor,
+		selectLastColor
 	})
 	
 	fastify.addHook('onClose', async () => {
@@ -191,6 +224,9 @@ declare module 'fastify' {
 			insertFitnessProduct: (product: OneProduct) => Promise<any>;
 			selectFitnessProduct: (tinyId: string | null, sku: string | null) => Promise<QueryResult | null>;
 			selectFitnessBrokenImg: () => Promise<QueryResult | null>;
+			selectFitnessCloths: () => Promise<QueryResult | null>;
+			insertFitnessColor: (name: string, sku: number) => Promise<any>;
+			selectLastColor: () => Promise<QueryResult | null>;
 		};
 	}
 }

@@ -43,6 +43,7 @@ export const PostProductSchema = {
 		},
 		400: errorSchemas.badRequest,
 		404: errorSchemas.notFound,
+		409: errorSchemas.duplicateKey,
 		500: errorSchemas.internalError,
 	}
 }
@@ -86,6 +87,31 @@ export const PatchProductSchema = {
 		},
 		400: errorSchemas.badRequest,
 		404: errorSchemas.notFound,
+		500: errorSchemas.internalError,
+	}
+}
+
+export const PostColorSchema = {
+	description: "Cria ou atualiza uma cor no banco de dados",
+	tags: ["Database"],
+	body: {
+		type: "object",
+		properties: {
+			name: {type: "string"},
+			sku: {type: "string"},
+		},
+		required: ["name", "sku"]
+	},
+	response: {
+		201: {
+			type: "object",
+			properties: {
+				data: {}
+			}
+		},
+		400: errorSchemas.badRequest,
+		404: errorSchemas.notFound,
+		409: errorSchemas.duplicateKey,
 		500: errorSchemas.internalError,
 	}
 }

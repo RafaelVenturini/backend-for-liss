@@ -44,3 +44,7 @@ export interface InsertFitOrder {
 export interface fixImgResult extends RowDataPacket {
 	tiny_id: number
 }
+
+export interface ClothsResult extends RowDataPacket {
+	nome: string;
+}

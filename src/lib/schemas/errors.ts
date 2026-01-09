@@ -19,5 +19,12 @@ export const errorSchemas = {
 			statusCode: {type: 'number', example: 500},
 			error: {type: 'string'}
 		}
+	},
+	duplicateKey: {
+		type: 'object',
+		properties: {
+			statusCode: {type: 'number', example: 409},
+			error: {type: 'string'}
+		}
 	}
 }
