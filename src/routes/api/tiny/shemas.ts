@@ -1,6 +1,7 @@
 import {errorSchemas} from "@/lib/schemas/errors.js";
 
 export const ProductSchema = {
+	tags: ["Tiny"],
 	querystring: {
 		type: "object",
 		required: ["id"],

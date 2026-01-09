@@ -1,6 +1,7 @@
 import {errorSchemas} from "@/lib/schemas/errors.js";
 
 export const webhookSchema = {
+	tags: ["Tiendanube"],
 	body: {
 		type: "object",
 		required: ["store_id", "id", "event"],
