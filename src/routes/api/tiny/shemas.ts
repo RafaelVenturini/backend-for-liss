@@ -26,6 +26,7 @@ export const ProductSchema = {
 }
 
 export const ProductListSchema = {
+	tags: ["Tiny"],
 	body: {
 		type: "object",
 		required: ["date"],
