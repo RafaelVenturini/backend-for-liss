@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import {createPool, Pool, ResultSetHeader} from "mysql2/promise";
 import {appConfig} from "@config";
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {
 	ClothsResult,
 	fixImgResult,
@@ -14,6 +14,7 @@ import {
 	insertAddresSql,
 	insertColorSql,
 	insertCustomerSql,
+	insertLogSql,
 	insertMultColorSql,
 	insertOrderProductSql,
 	insertOrderSql,
@@ -186,6 +187,22 @@ async function databasePlugin(fastify: FastifyInstance) {
 	///
 	/// Tools Query's
 	///
+	const insertFitnessBrokenImg = async (req: FastifyRequest, rep: FastifyReply, department: string, error: string, startDate: Date) => {
+		const data = {
+			endpoint: req.url,
+			body: JSON.stringify(req.body) || null,
+			status: rep.statusCode,
+			error,
+			method: req.method,
+			startDate,
+			duration: rep.elapsedTime,
+			department
+		}
+		
+		const insert = [data.endpoint, data.body, data.status, data.error, data.method, data.startDate, data.duration, data.department]
+		
+		await toolPool.execute(insertLogSql, insert)
+	}
 	
 	fastify.decorate('insertFitnessOrderProducts', insertFitnessOrderProducts)
 	

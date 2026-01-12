@@ -2,6 +2,7 @@ import './config.js'
 import fastify, {FastifyError} from "fastify";
 import {registerRoutes} from "./routes/index.js";
 import database from "@plugins/database.js";
+import mailerPlugin from "@plugins/mailer.js";
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 
@@ -34,7 +35,8 @@ export function buildApp() {
 	})
 	
 	app.register(swaggerUi, {routePrefix: '/docs'})
-	
+	app.register(database)
+	app.register(mailerPlugin)
 	
 	app.setErrorHandler((error: FastifyError, request, reply) => {
 		if (error.validation) {
@@ -64,7 +66,6 @@ export function buildApp() {
 		})
 	})
 	
-	app.register(database)
 	registerRoutes(app)
 	return app
 }

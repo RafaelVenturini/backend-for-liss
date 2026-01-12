@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Novidades para você - Liss Fitness</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #F5F5F5;
+            font-family: sans-serif;
+        }
+
+        .content-wrapper {
+            background-color: #FBF9FA;
+            padding: 40px 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #E3D2E6;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Círculos decorativos para manter a identidade */
+        .circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .c1 {
+            top: -20px;
+            left: -20px;
+            background-color: #F6AB7A;
+        }
+
+        .c2 {
+            bottom: -20px;
+            right: -20px;
+            background-color: #BF208F;
+        }
+
+        h1 {
+            color: #6F064F;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .message-text {
+            color: #2C1C24;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background-color: #F6AB7A;
+            color: #6F064F;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .highlight-box {
+            background-color: #FBF9FA;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 2px dashed #DECCAD;
+        }
+
+        .cta-button {
+            background-color: #BF208F;
+            color: white !important;
+            padding: 18px 30px;
+            border-radius: 12px;
+            display: inline-block;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(191, 32, 143, 0.3);
+        }
+
+        .footer-link {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #6F064F;
+        }
+    </style>
+</head>
+<body>
+<div class="content-wrapper">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+
+    <span class="status-badge">Aviso Importante</span>
+    <h1>Poxa, seu cupom expirou... 🕒</h1>
+
+    <p class="message-text">
+        Olá! Notamos que o seu cupom de cashback
+        <strong>{{coupon}}</strong> não foi utilizado a tempo e acabou
+        expirando.
+    </p>
+
+    <div class="highlight-box">
+        <p style="color: #6F064F; font-weight: bold; margin-bottom: 10px;">
+            Mas não se preocupe! 💖</p>
+        <p style="color: #2C1C24; font-size: 0.95rem;">
+            Nossa coleção nova acabou de chegar e está incrível. Que tal
+            dar uma espiadinha e garantir o seu look para o próximo treino?
+        </p>
+    </div>
+
+    <a class="cta-button" href="https://lissfitness.com.br">VER NOVIDADES
+        AGORA</a>
+
+    <div class="footer-link">
+        Dúvidas? Responda este e-mail ou chame a gente no <a href="#"
+                                                             style="color: #BF208F;">WhatsApp</a>.
+    </div>
+</div>
+</body>
+</html>

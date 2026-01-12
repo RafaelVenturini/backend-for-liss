@@ -434,3 +434,27 @@ export interface Fullfillments {
 	created_at: string;
 	updated_at: string;
 }
+
+export interface Coupon {
+	id: number,
+	code: string,
+	type: string,
+	value: string,
+	valid: boolean,
+	used: number,
+	max_uses: number,
+	includes_shipping: boolean,
+	start_date: string,
+	start_time: string,
+	end_date: string,
+	end_time: string,
+	min_price: null,
+	categories: null,
+	products: null,
+	first_consumer_purchase: boolean,
+	max_uses_per_client: number,
+	is_deleted: boolean,
+	combines_with_other_discounts: boolean,
+	only_cheapest_shipping: boolean,
+	max_discount_amount: null
+}

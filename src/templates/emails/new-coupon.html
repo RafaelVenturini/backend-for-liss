@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Cupom</title>
+    <style>
+        /* Estilos gerais para reset */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #F5F5F5;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        /* Container Principal (Substitui o Main/Flexbox) */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content-wrapper {
+            background-color: #FBF9FA;
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 100%;
+            border: 1px solid #E3D2E6;
+            text-align: center;
+        }
+
+        h1 {
+            color: #6F064F;
+            font-size: 28px;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            font-family: sans-serif;
+        }
+
+        .intro-text {
+            color: #2C1C24;
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-family: sans-serif;
+        }
+
+        .value-highlight {
+            color: #BF208F;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* Box do Código (Degradê inline para compatibilidade) */
+        .code-box {
+            background: #E3D2E6; /* Fallback */
+            background: linear-gradient(135deg, #E3D2E6 0%, #DECCAD 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            border: 3px solid #BF208F;
+        }
+
+        .code-box h2 {
+            color: #6F064F;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-family: sans-serif;
+        }
+
+        .code-display {
+            background-color: #FBF9FA;
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            border: 2px dashed #BF208F;
+        }
+
+        .code-display strong {
+            font-size: 32px;
+            color: #6F064F;
+            letter-spacing: 3px;
+            font-family: monospace;
+        }
+
+        .expiry-text {
+            color: #2C1C24;
+            font-size: 16px;
+            line-height: 1.6;
+            background-color: #DECCAD;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-family: sans-serif;
+        }
+
+        .expiry-date {
+            color: #6F064F;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn-link {
+            color: #BF208F;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body style="background-color: #F5F5F5; font-family: sans-serif;">
+<div class="email-container">
+    <div class="content-wrapper">
+
+        <h1>🎉 Parabéns, Você Ganhou Cashback!</h1>
+
+        <p class="intro-text">
+            Um cashback de <span
+                class="value-highlight">{{discount}}</span> está esperando
+            por você!<br>
+            Use seu cupom personalizado e aproveite.
+        </p>
+
+        <div class="code-box">
+            <h2>✨ Seu Código Especial:</h2>
+            <div class="code-display">
+                <strong>{{ coupon }}</strong>
+            </div>
+        </div>
+
+        <div class="expiry-text">
+            ⏰ Válido até <span class="expiry-date">{{ vality }}</span><br>
+            <br>
+            Acesse já: <a class="btn-link"
+                          href="https://lissfitness.com.br">Liss Fitness</a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

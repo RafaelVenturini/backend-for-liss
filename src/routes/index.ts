@@ -1,12 +1,22 @@
 import {FastifyInstance} from "fastify";
 import webhookRoutes from "./webhook/index.js";
 import apiRoutes from "@routes/api/index.js";
+import testRoutes from "@routes/test/index.js";
 
 export async function registerRoutes(app: FastifyInstance) {
 	app.register(webhookRoutes, {prefix: '/webhook'})
 	app.register(apiRoutes, {prefix: '/api'})
+	app.register(testRoutes, {prefix: '/test'})
 	
-	app.get('/', async () => {
-		return {server: 'alive'}
+	app.get('/', async (request, reply) => {
+		return {
+			server: 'alive',
+			endpoint: request.url,
+			method: request.method,
+			status: reply.statusCode,
+			duration: reply.elapsedTime,
+			body: JSON.stringify(request.body) || null,
+			timestamp: new Date(),
+		}
 	})
 }

@@ -1,12 +1,17 @@
-import nodemailer from 'nodemailer'
+import {appConfig} from "@config";
 
-export async function sendEmail(mailer: any,from:string,to:string,subject:string,html:string) {
-	const info = await mailer.sendMail({from, to, subject, html,});
-	
-	console.log("Info:", info);
+export interface Mailer {
+	host: string,
+	port: number,
+	secure: boolean,
+	auth: {
+		user: string,
+		pass: string,
+	},
 }
 
-export const testMailer = nodemailer.createTransport({
+
+export const testMailer = {
 	host: "smtp.ethereal.email",
 	port: 587,
 	secure: false,
@@ -14,12 +19,19 @@ export const testMailer = nodemailer.createTransport({
 		user: "lilian.bernier69@ethereal.email",
 		pass: "v9B65XvD1wmDakX2gX",
 	},
-});
+}
 
-// await sendEmail(
-// 	testMailer,
-// 	'Lilian Bernier <lilian.bernier69@ethereal.email>',
-// 	'rafaelventurinidipalma@gmail.com',
-// 	'Test Email',
-// 	'<h1>Hello from Ruffus!</h1><p>This is a test email.</p>'
-// );
+const mainHost = 'smtp.hostinger.com'
+export const fitnessMailer = {
+	host: mainHost,
+	port: 465,
+	secure: true,
+	auth: {
+		user: appConfig.emails.info.user,
+		pass: appConfig.emails.info.pass,
+	},
+	tls: {
+		rejectUnauthorized: false
+	}
+}
+

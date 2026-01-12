@@ -1,5 +1,9 @@
 import {onDuplicatedKeyUpdate} from "@/lib/string/database.js";
 
+///
+/// Fitness SQL
+///
+
 export const insertCustomerSql = `
     INSERT INTO cliente(cliente_id,
                         nome,
@@ -114,4 +118,18 @@ export const selectLastColorSql = `
     FROM cor
     ORDER BY id DESC
     LIMIT 1
+`
+
+///
+/// Fashion SQL
+///
+
+
+///
+/// Tools SQL
+///
+export const insertLogSql = `
+    INSERT INTO backend_logs(endpoint, body, status, error, method,
+                             start_time, duration, department)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `

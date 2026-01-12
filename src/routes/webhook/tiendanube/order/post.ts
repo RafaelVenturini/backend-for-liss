@@ -1,9 +1,18 @@
 import {RouteHandlerMethod} from "fastify";
 import {getOrder} from "@api/tiendanube/order.js";
+import {cashBack, cashbackValityDays} from "@/lib/util/busines-rules.js";
+import {calculateDate} from "@/lib/string/date.js";
+import {
+	createCoupon,
+	deleteCoupon,
+	getCoupon,
+	updateCoupon
+} from "@api/tiendanube/coupon.js";
+import {toBLR} from "@/lib/string/money.js";
 
 
 const postOrder: RouteHandlerMethod = async (request, reply) => {
-	const {id} = request.body as any
+	const {id, event} = request.body as any
 	
 	try {
 		const data = await getOrder(id)
@@ -51,10 +60,80 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 			bandeira: data.payment_details.credit_card_company,
 			parcelamento: data.payment_details.installments,
 			status: data.status,
+			pagamento: data.payment_status,
 		}
 		const products = data.products
 		await request.server.db.insertFitnessOrder(order)
 		await request.server.db.insertFitnessOrderProducts(products, order.pedido_id)
+		
+		
+		if (data.payment_status === 'paid') {
+			const customerName = data.customer.name.split(' ')[0]
+			const orderNumber = data.number
+			const couponCode = `CB${customerName}${orderNumber}`
+			const discount = (Number(data.total) - Number(data.subtotal) * cashBack).toFixed(2)
+			const startDate = new Date()
+			const vality = calculateDate(new Date(), cashbackValityDays)
+			
+			const couponItens = {
+				couponCode,
+				discount,
+				startDate,
+				vality,
+			}
+			let couponSearch
+			let couponId
+			
+			switch (event) {
+				case 'order/created':
+					await createCoupon(couponItens)
+					request.server.mailer.send('new-coupon',
+						'Cupom de Cashback exclusivo!',
+						customer.email,
+						{
+							discount: toBLR(couponItens.discount),
+							coupon: couponItens.couponCode,
+							vality: (couponItens.vality).toLocaleDateString('pt-BR', {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric'
+							})
+						}
+					)
+					return reply.status(201).send({data: couponItens})
+				case 'order/cancelled':
+					couponSearch = await getCoupon(orderNumber)
+					if (!couponSearch[0]) return reply.status(404).send({error: 'Coupon not found'})
+					couponId = couponSearch[0].id
+					if (!couponId) return reply.status(404).send({error: 'Coupon not found'})
+					await deleteCoupon(couponId)
+					request.server.mailer.send('deleted-coupon',
+						'Cupom deletado por cancelamento de pedido',
+						customer.email,
+						{
+							discount: toBLR(couponItens.discount),
+							coupon: couponItens.couponCode,
+							vality: (couponItens.vality).toLocaleDateString('pt-BR', {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric'
+							})
+						}
+					)
+					
+					return reply.status(204).send({data: 'Coupon deleted successfully'})
+				case 'order/updated':
+				case 'order/edited':
+					couponSearch = await getCoupon(orderNumber)
+					couponId = couponSearch[0].id
+					if (!couponId) return reply.status(404).send({error: 'Coupon not found'})
+					const resp = await updateCoupon(couponId, couponItens)
+					if (!resp) return reply.status(404).send({error: 'Coupon not found'})
+					return reply.status(201).send({data: resp})
+				default:
+					return reply.status(204).send({data: 'No action'})
+			}
+		}
 		
 		return reply.status(201).send({data: order})
 	} catch (e) {
@@ -63,3 +142,4 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 }
 
 export default postOrder;
+

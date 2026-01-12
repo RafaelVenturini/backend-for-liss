@@ -64,6 +64,12 @@ export const appConfig = {
 	zuma: {
 		token: process.env.ZUMA_TKN!,
 	},
+	emails: {
+		info: {
+			user: process.env.EMAIL_FIT_INFO_USER!,
+			pass: process.env.EMAIL_FIT_INFO_PASS!,
+		}
+	}
 }
 
 console.log('Config loaded successfully')
