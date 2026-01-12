@@ -1,10 +1,15 @@
 import './config.js'
-import fastify, {FastifyError} from "fastify";
+import fastify, {
+	FastifyError,
+	FastifyReply,
+	FastifyRequest
+} from "fastify";
 import {registerRoutes} from "./routes/index.js";
 import database from "@plugins/database.js";
 import mailerPlugin from "@plugins/mailer.js";
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
+
 
 export function buildApp() {
 	const app = fastify({logger: true});
@@ -38,12 +43,21 @@ export function buildApp() {
 	app.register(database)
 	app.register(mailerPlugin)
 	
-	app.setErrorHandler((error: FastifyError, request, reply) => {
+	app.addHook('onRequest', async (request: FastifyRequest) => {
+		request.startDate = new Date()
+	})
+	app.addHook('onResponse', async (request: FastifyRequest, reply: FastifyReply) => {
+		const error = request.executionError || null;
+		await app.db.insertLog(request, reply, error)
+	})
+	
+	app.setErrorHandler(async (error: FastifyError, request, reply) => {
+		request.executionError = error;
+		
 		if (error.validation) {
 			return reply.status(400).send({
 				statusCode: 400,
-				error: error.message, // Aqui vem o "tinyId is required"
-				details: error.validation // Opcional: mostra qual campo falhou
+				error: error.message,
 			});
 		}
 		

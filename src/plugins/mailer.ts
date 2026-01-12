@@ -31,12 +31,5 @@ const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 	app.decorate('mailer', {send: sendEmail});
 };
 
-declare module 'fastify' {
-	interface FastifyInstance {
-		mailer: {
-			send: (templateName: string, subject: string, to: string, data: any) => Promise<any>
-		}
-	}
-}
 
 export default fp(mailerPlugin);

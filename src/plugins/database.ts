@@ -1,5 +1,5 @@
 import fp from 'fastify-plugin';
-import {createPool, Pool, ResultSetHeader} from "mysql2/promise";
+import {createPool, ResultSetHeader} from "mysql2/promise";
 import {appConfig} from "@config";
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {
@@ -30,7 +30,6 @@ import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
 import {OneProduct} from "@api/tiny/interfaces.js";
 import {segmentOfSku} from "@/lib/objects/segment-of-sku.js";
 import {tinyAnexos} from "@/lib/string/products.js";
-import {QueryResult} from "mysql2";
 
 async function databasePlugin(fastify: FastifyInstance) {
 	const fitnessPool = createPool(appConfig.databases.fitness)
@@ -187,21 +186,25 @@ async function databasePlugin(fastify: FastifyInstance) {
 	///
 	/// Tools Query's
 	///
-	const insertFitnessBrokenImg = async (req: FastifyRequest, rep: FastifyReply, department: string, error: string, startDate: Date) => {
+	const insertLog = async (req: FastifyRequest, rep: FastifyReply, error: any | null) => {
 		const data = {
 			endpoint: req.url,
-			body: JSON.stringify(req.body) || null,
+			body: req.body ? JSON.stringify(req.body) : null,
 			status: rep.statusCode,
-			error,
+			error: error instanceof Error ? error.message : (error ? String(error) : null),
 			method: req.method,
-			startDate,
-			duration: rep.elapsedTime,
-			department
+			startDate: req.startDate,
+			duration: new Date().getTime() - req.startDate.getTime(),
 		}
 		
-		const insert = [data.endpoint, data.body, data.status, data.error, data.method, data.startDate, data.duration, data.department]
+		const insert = [data.endpoint, data.body, data.status, data.error, data.method, data.startDate, data.duration]
+		if (data.endpoint.includes('/docs')) return
 		
-		await toolPool.execute(insertLogSql, insert)
+		try {
+			await toolPool.execute(insertLogSql, insert)
+		} catch (e) {
+			console.error("Critical error: ", e)
+		}
 	}
 	
 	fastify.decorate('insertFitnessOrderProducts', insertFitnessOrderProducts)
@@ -219,7 +222,8 @@ async function databasePlugin(fastify: FastifyInstance) {
 		selectFitnessBrokenImg,
 		selectFitnessCloths,
 		insertFitnessColor,
-		selectLastColor
+		selectLastColor,
+		insertLog
 	})
 	
 	fastify.addHook('onClose', async () => {
@@ -228,24 +232,5 @@ async function databasePlugin(fastify: FastifyInstance) {
 	})
 }
 
-declare module 'fastify' {
-	interface FastifyInstance {
-		db: {
-			fitness: Pool;
-			fashion: Pool;
-			tool: Pool;
-			insertFitnessCustomer: (customer: InsertFitUser) => Promise<any>;
-			insertFitnessAddress: (address: InsertFitAddress) => Promise<any>;
-			insertFitnessOrder: (order: InsertFitOrder) => Promise<any>;
-			insertFitnessOrderProducts: (products: TiendanubeProduct[], pedido_id: number) => Promise<any>;
-			insertFitnessProduct: (product: OneProduct) => Promise<any>;
-			selectFitnessProduct: (tinyId: string | null, sku: string | null) => Promise<QueryResult | null>;
-			selectFitnessBrokenImg: () => Promise<QueryResult | null>;
-			selectFitnessCloths: () => Promise<QueryResult | null>;
-			insertFitnessColor: (name: string, sku: number) => Promise<any>;
-			selectLastColor: () => Promise<QueryResult | null>;
-		};
-	}
-}
 
 export default fp(databasePlugin);
