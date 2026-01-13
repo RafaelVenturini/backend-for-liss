@@ -9,18 +9,20 @@ import {fitnessMailer} from "@emails/emails.js";
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 	const transporter = nodemailer.createTransport(fitnessMailer);
 	
-	const verifyPromise = transporter.verify();
-	const timeoutPromise = new Promise((_, reject) =>
-		setTimeout(() => reject(new Error('SMTP verify timeout')), 5000)
-	);
+	const checkConnection = async (attempts = 0) => {
+		try {
+			await transporter.verify();
+			app.log.info('SMTP Conectado e pronto para uso.');
+		} catch (err: any) {
+			app.log.error(`Erro SMTP (Tentativa ${attempts + 1}): ${err.message}`);
+			// Tenta novamente em 30 segundos se falhar
+			if (attempts < 5) {
+				setTimeout(() => checkConnection(attempts + 1), 30000);
+			}
+		}
+	};
 	
-	try {
-		await Promise.race([verifyPromise, timeoutPromise]);
-	} catch (error) {
-		console.error('\n\n\n\nErro ao verificar o transporte de' +
-			' e-mail:', error, '\n\n\n\n');
-		// Não lance o erro, apenas logue
-	}
+	checkConnection();
 	
 	// try {
 	// 	await transporter.verify();
@@ -30,7 +32,7 @@ const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 	// }
 	
 	const sendEmail = async (templateName: string, subject: string, to: string, data: any) => {
-		const filePath = path.join(process.cwd(), 'src/templates/emails', `${templateName}.html`);
+		const filePath = path.join(process.cwd(), 'src', 'templates', 'emails', `${templateName}.html`);
 		const source = fs.readFileSync(filePath, 'utf-8');
 		const template = handlebars.compile(source);
 		const html = template(data);
