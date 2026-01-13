@@ -42,6 +42,7 @@ declare module 'fastify' {
 			insertFitnessColor: (name: string, sku: number) => Promise<any>;
 			selectLastColor: () => Promise<QueryResult | null>;
 			insertLog: (req: FastifyRequest, rep: FastifyReply, error: any | null) => Promise<any>;
+			selectNonCreated: (ids: string[]) => Promise<number[] | null>;
 		};
 	}
 }

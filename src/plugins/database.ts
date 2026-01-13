@@ -178,6 +178,19 @@ async function databasePlugin(fastify: FastifyInstance) {
 		const [rows] = await fitnessPool.execute(selectLastColorSql)
 		return rows
 	}
+	
+	const selectNonCreated = async (ids: string[]) => {
+		if (ids.length === 0) return []
+		const search = ids.map(id => `ROW(${id})`).join(', ');
+		const [rows] = await fitnessPool.execute<ClothsResult[]>(`
+            SELECT lista.id
+            FROM (VALUES ${search}) AS lista(id)
+                     LEFT JOIN produto ON lista.id = tiny_id
+            WHERE tiny_id IS NULL;
+		`)
+		return rows.map(row => row.id)
+	}
+	
 	///
 	/// Fashion Query's
 	///
@@ -195,9 +208,10 @@ async function databasePlugin(fastify: FastifyInstance) {
 			method: req.method,
 			startDate: req.startDate,
 			duration: new Date().getTime() - req.startDate.getTime(),
+			enviroment: process.env.NODE_ENV || 'prod'
 		}
 		
-		const insert = [data.endpoint, data.body, data.status, data.error, data.method, data.startDate, data.duration]
+		const insert = [data.endpoint, data.body, data.status, data.error, data.method, data.startDate, data.duration, data.enviroment]
 		if (data.endpoint.includes('/docs')) return
 		
 		try {
@@ -223,7 +237,8 @@ async function databasePlugin(fastify: FastifyInstance) {
 		selectFitnessCloths,
 		insertFitnessColor,
 		selectLastColor,
-		insertLog
+		insertLog,
+		selectNonCreated
 	})
 	
 	fastify.addHook('onClose', async () => {

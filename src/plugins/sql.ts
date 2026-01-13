@@ -120,6 +120,7 @@ export const selectLastColorSql = `
     LIMIT 1
 `
 
+
 ///
 /// Fashion SQL
 ///
@@ -130,6 +131,6 @@ export const selectLastColorSql = `
 ///
 export const insertLogSql = `
     INSERT INTO backend_logs(endpoint, body, status, error, method,
-                             start_time, duration)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+                             start_time, duration, environment)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `
