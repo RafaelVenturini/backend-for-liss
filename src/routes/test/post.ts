@@ -4,7 +4,7 @@ const postTest: RouteHandlerMethod = async (request, reply) => {
 	const text = 'deleted'
 	try {
 		const data = await request.server.mailer.send(
-			`${text}-coupon.html`,
+			`${text}-coupon`,
 			`Teste Nodemailer ${text}`,
 			'rafaelventurinidipalma@gmail.com',
 			{

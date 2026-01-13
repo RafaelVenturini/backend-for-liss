@@ -24,8 +24,8 @@ export const testMailer = {
 const mainHost = 'smtp.hostinger.com'
 export const fitnessMailer = {
 	host: mainHost,
-	port: 465,
-	secure: true,
+	port: 587,
+	secure: false,
 	auth: {
 		user: appConfig.emails.info.user,
 		pass: appConfig.emails.info.pass,

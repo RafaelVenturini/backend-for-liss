@@ -17,7 +17,7 @@ declare module 'fastify' {
 	}
 }
 
-declare module '@/types/fastify.js' {
+declare module 'fastify' {
 	interface FastifyInstance {
 		mailer: {
 			send: (templateName: string, subject: string, to: string, data: any) => Promise<any>
