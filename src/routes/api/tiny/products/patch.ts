@@ -7,7 +7,10 @@ const getProducts: RouteHandlerMethod = async (request, reply) => {
 		if (!date) return reply.status(400).send({error: 'Date is required'})
 		if (typeof date !== 'string') return reply.status(400).send({error: 'Date must be a string'})
 		
-		const data = await getProductsByDate(date)
+		const resp = await getProductsByDate(date)
+		const data = resp.map(x => {
+			return {id: x.id, sku: x.codigo, criacao: x.data_criacao}
+		})
 		
 		return reply.status(201).send({data})
 	} catch (e) {
