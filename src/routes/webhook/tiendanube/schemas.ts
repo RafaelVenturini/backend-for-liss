@@ -6,7 +6,12 @@ export const webhookSchema = {
 		type: "object",
 		required: ["store_id", "id", "event"],
 		properties: {
-			store_id: {const: 4820240},
+			store_id: {
+				anyOf: [
+					{const: 4820240},
+					{const: "4820240"}
+				]
+			},
 			id: {type: "number", minimum: 1},
 			event: {type: "string"},
 		}
