@@ -28,7 +28,8 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 			email: data.customer.email,
 			nuvem_id: data.customer.id,
 		}
-		await request.server.db.insertFitnessCustomer(customer)
+		const customerData = await request.server.db.insertFitnessCustomer(customer)
+		
 		const address = {
 			cliente_id: data.customer.identification,
 			cep: data.customer.default_address.zipcode,
@@ -65,7 +66,6 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 		const products = data.products
 		await request.server.db.insertFitnessOrder(order)
 		await request.server.db.insertFitnessOrderProducts(products, order.pedido_id)
-		
 		
 		if (data.payment_status === 'paid') {
 			const customerName = data.customer.name.split(' ')[0]
@@ -125,8 +125,24 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 				case 'order/updated':
 				case 'order/edited':
 					couponSearch = await getCoupon(orderNumber)
+					if (couponSearch.length === 0 || !couponSearch[0].id) {
+						await createCoupon(couponItens)
+						request.server.mailer.send('new-coupon',
+							'Cupom de Cashback exclusivo!',
+							customer.email,
+							{
+								discount: toBLR(couponItens.discount),
+								coupon: couponItens.couponCode,
+								vality: (couponItens.vality).toLocaleDateString('pt-BR', {
+									year: 'numeric',
+									month: 'long',
+									day: 'numeric'
+								})
+							}
+						)
+						return reply.status(201).send({data: couponItens})
+					}
 					couponId = couponSearch[0].id
-					if (!couponId) return reply.status(404).send({error: 'Coupon not found'})
 					const resp = await updateCoupon(couponId, couponItens)
 					if (!resp) return reply.status(404).send({error: 'Coupon not found'})
 					return reply.status(201).send({data: resp})

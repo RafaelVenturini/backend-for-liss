@@ -30,11 +30,15 @@ import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
 import {OneProduct} from "@api/tiny/interfaces.js";
 import {segmentOfSku} from "@/lib/objects/segment-of-sku.js";
 import {tinyAnexos} from "@/lib/string/products.js";
+import {
+	insertCustomer
+} from "@/lib/functions/nuvemshop/insert-customer.js";
 
 async function databasePlugin(fastify: FastifyInstance) {
 	const fitnessPool = createPool(appConfig.databases.fitness)
 	const fashionPool = createPool(appConfig.databases.fashion)
 	const toolPool = createPool(appConfig.databases.tools)
+	
 	///
 	/// Fitness Query's
 	///
@@ -51,10 +55,11 @@ async function databasePlugin(fastify: FastifyInstance) {
 		const insert = [cliente_id, nome, databaseDate(dia_cadastro), telefone, email, nuvem_id]
 		
 		try {
-			return fitnessPool.execute(insertCustomerSql, insert);
+			const data = await fitnessPool.execute(insertCustomerSql, insert);
+			return {data}
 		} catch (e) {
-			console.log(e)
-			return {error: e}
+			console.log({error: e, insert})
+			return {error: {reason: e, insert}}
 		}
 	}
 	
@@ -72,18 +77,29 @@ async function databasePlugin(fastify: FastifyInstance) {
 			criacao,
 		} = address
 		
-		const [select] = await fitnessPool.execute(selectAddressSql, [cliente_id, cep])
+		const selectParam = [cliente_id, cep]
+		
+		const [select] = await fitnessPool.execute(selectAddressSql, selectParam)
 		// @ts-ignore
 		if (select.length === 1) return select[0].endereco_id
 		const insert = [cliente_id, cep, rua, numero, complemento, bairro, cidade, estado, pais, databaseDate(criacao)]
-		
 		try {
 			const [inserted] = await fitnessPool.execute<ResultSetHeader>(insertAddresSql, insert)
-			
 			return inserted.insertId
-		} catch (e) {
-			console.log(e)
-			return {error: e}
+		} catch (e: any) {
+			console.log({error: e, insert, select})
+			if (e.errno === 1216) {
+				const insertedCustomer = await insertCustomer(null, cliente_id)
+				if (insertedCustomer.code > 300 || !insertedCustomer.data) {
+					console.log({error: e, insertedCustomer})
+					return {error: {reason: e, insertedCustomer}}
+				}
+				await insertFitnessCustomer(insertedCustomer.data)
+				const [inserted] = await fitnessPool.execute<ResultSetHeader>(insertAddresSql, insert)
+				return inserted.insertId
+			}
+			
+			return {error: {reason: e, insert, select}}
 		}
 	}
 	
@@ -109,14 +125,17 @@ async function databasePlugin(fastify: FastifyInstance) {
 		
 		const insert = [pedido_id, endereco_id, cliente_id, frete, subtotal, desconto, total, entregadora, tipo_entrega, plataforma, cod_rastreio, databaseDate(data_pedido), metodo_pagamento, bandeira, parcelamento, status]
 		
-		return fitnessPool.execute(insertOrderSql, insert);
+		try {
+			return fitnessPool.execute(insertOrderSql, insert);
+		} catch (e) {
+			console.log({error: e, insert})
+			return {error: {reason: e, insert}}
+		}
 	}
 	
 	const insertFitnessOrderProducts = async (products: TiendanubeProduct[], pedido_id: number) => {
 		await fitnessPool.execute(deleteOrderProductSql, [pedido_id])
-		console.log('Products deleted')
 		for (const product of products) {
-			console.log(product.sku)
 			if (!product.quantity) continue;
 			if (!isNaN(Number(product.sku))) continue;
 			const insert = [pedido_id, product.sku, product.quantity]
@@ -125,7 +144,6 @@ async function databasePlugin(fastify: FastifyInstance) {
 	}
 	
 	const insertFitnessProduct = async (product: OneProduct) => {
-		
 		const {id, nome, codigo, preco, anexos} = product
 		const x = segmentOfSku(codigo, nome)
 		if (x === null) return
@@ -134,8 +152,8 @@ async function databasePlugin(fastify: FastifyInstance) {
 		try {
 			await fitnessPool.execute(insertProductSql, insert)
 		} catch (e) {
-			console.log(e)
-			return {error: e}
+			console.log({error: e, insert})
+			return {error: {reason: e, insert}}
 		}
 	}
 	
