@@ -14,6 +14,7 @@ declare module 'fastify' {
 	interface FastifyRequest {
 		startDate: Date;
 		executionError?: any
+		rawBody?: any
 	}
 }
 

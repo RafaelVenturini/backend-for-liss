@@ -200,11 +200,14 @@ async function databasePlugin(fastify: FastifyInstance) {
 	/// Tools Query's
 	///
 	const insertLog = async (req: FastifyRequest, rep: FastifyReply, error: any | null) => {
+		const errorResp = error instanceof Error
+			? error.message
+			: (error ? String(error) : null);
 		const data = {
 			endpoint: req.url,
 			body: req.body ? JSON.stringify(req.body) : null,
 			status: rep.statusCode,
-			error: error instanceof Error ? error.message : (error ? String(error) : null),
+			error: errorResp,
 			method: req.method,
 			startDate: req.startDate,
 			duration: new Date().getTime() - req.startDate.getTime(),

@@ -46,10 +46,15 @@ export function buildApp() {
 	app.addHook('onRequest', async (request: FastifyRequest) => {
 		request.startDate = new Date()
 	})
+	app.addHook('onSend', async (request, reply, payload) => {
+		request.rawBody = payload;
+		return payload;
+	});
+	
 	app.addHook('onResponse', async (request: FastifyRequest, reply: FastifyReply) => {
-		const error = request.executionError || null;
-		await app.db.insertLog(request, reply, error)
-	})
+		const error = request.executionError || request.rawBody || null;
+		await app.db.insertLog(request, reply, error);
+	});
 	
 	app.setErrorHandler(async (error: FastifyError, request, reply) => {
 		request.executionError = error;
