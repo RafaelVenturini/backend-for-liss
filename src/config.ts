@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import {S3Client} from "@aws-sdk/client-s3";
 
 const required = [
 	'DB_HOST',
@@ -17,11 +18,31 @@ const required = [
 	'NVSHP_SHOP',
 	'TINY_TKN',
 	'ZUMA_TKN',
+	'RAIL_WORKSPACE_TKN',
+	'RAIL_PRODUCTION_TKN',
+	'RAIL_PROJECT_ID',
+	'EMAIL_FIT_INFO_USER',
+	'EMAIL_FIT_INFO_PASS',
+	'NODE_ENV',
+	'BUCK_URL',
+	'BUCK_REGION',
+	'BUCK_PUB_NAME',
+	'BUCK_PUB_ACCESS_ID',
+	'BUCK_PUB_ACCESS_KEY',
 ]
 
 for (const key of required) {
 	if (!process.env[key]) throw new Error(`Missing env var ${key}`)
 }
+
+const publicBucket = new S3Client({
+	endpoint: process.env.BUCK_URL!,
+	region: process.env.BUCK_REGION!,
+	credentials: {
+		accessKeyId: process.env.BUCK_PUB_ACCESS_ID!,
+		secretAccessKey: process.env.BUCK_PUB_ACCESS_KEY!
+	}
+})
 
 export const appConfig = {
 	databases: {
@@ -69,6 +90,14 @@ export const appConfig = {
 			user: process.env.EMAIL_FIT_INFO_USER!,
 			pass: process.env.EMAIL_FIT_INFO_PASS!,
 		}
+	},
+	buckets: {
+		data: {
+			name: process.env.BUCK_PUB_NAME!,
+			url: process.env.BUCK_URL!,
+			region: process.env.BUCK_REGION!,
+		},
+		public: {publicBucket}
 	}
 }
 
