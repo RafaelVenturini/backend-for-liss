@@ -6,7 +6,7 @@ import {
 } from "@api/tiny/interfaces.js";
 import {sleep} from "@/lib/util/sleep.js";
 
-export const getProduct = async (id: number) => {
+export const getProduct = async (id: number | string) => {
 	const linkPesquisa = `${linkv2}produto.obter.php${params}id=${id}`;
 	const resp = await fetch(linkPesquisa)
 	const data: GetProduct = await resp.json()

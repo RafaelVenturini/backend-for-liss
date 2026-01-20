@@ -135,12 +135,20 @@ async function databasePlugin(fastify: FastifyInstance) {
 	
 	const insertFitnessOrderProducts = async (products: TiendanubeProduct[], pedido_id: number) => {
 		await fitnessPool.execute(deleteOrderProductSql, [pedido_id])
+		const err = []
 		for (const product of products) {
-			if (!product.quantity) continue;
-			if (!isNaN(Number(product.sku))) continue;
-			const insert = [pedido_id, product.sku, product.quantity]
-			await fitnessPool.execute(insertOrderProductSql, insert)
+			try {
+				
+				if (!product.quantity) continue;
+				if (!isNaN(Number(product.sku))) continue;
+				const insert = [pedido_id, product.sku, product.quantity]
+				await fitnessPool.execute(insertOrderProductSql, insert)
+			} catch (e) {
+				// @ts-ignore
+				err.push({err: e.sqlMessage, product: product.sku})
+			}
 		}
+		return err;
 	}
 	
 	const insertFitnessProduct = async (product: OneProduct) => {

@@ -3,18 +3,17 @@ import {getProduct, getProductsByDate} from "@api/tiny/product.js";
 import {fixImgResult} from "@plugins/interface.js";
 
 interface Tested {
-	updated: number[],
+	updated: (number | string)[],
 	error: TestedError[]
 }
 
 interface TestedError {
-	id: number,
+	id: number | string,
 	sku: string
 	err: string
 }
 
 const patchProduct: RouteHandlerMethod = async (request, reply) => {
-	console.log('omg')
 	try {
 		const {date, all, fixImg} = request.body as any;
 		const tested: Tested = {
@@ -49,15 +48,21 @@ const patchProduct: RouteHandlerMethod = async (request, reply) => {
 					fixed: data.length - miss.length,
 				}
 			})
-		} else if (all) {
-			return reply.status(501).send({error: 'Not implemented yet'})
-		} else {
+		}
+			// else if (all) {
+			// 	return reply.status(501).send({error: 'Not implemented yet'})
+		// }
+		else {
 			const data = await getProductsByDate(date)
 			const ids = data.map(x => x.id)
-			const nonCreated = await request.server.db.selectNonCreated(ids)
-			if (!nonCreated) return reply.status(404).send({error: 'No new products found'})
-			console.log(nonCreated)
-			for (const id of nonCreated) {
+			let iterableIds: (number[] | string[]) | null = ids;
+			
+			if (!all) {
+				iterableIds = await request.server.db.selectNonCreated(ids)
+				if (!iterableIds) return reply.status(404).send({error: 'No new products found'})
+				
+			}
+			for (const id of iterableIds) {
 				const data = await getProduct(id)
 				if (!data) {
 					tested.error.push({id, err: "not found", sku: ''});

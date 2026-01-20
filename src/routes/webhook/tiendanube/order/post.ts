@@ -28,7 +28,6 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 			email: data.customer.email,
 			nuvem_id: data.customer.id,
 		}
-		const customerData = await request.server.db.insertFitnessCustomer(customer)
 		
 		const address = {
 			cliente_id: data.customer.identification,
@@ -65,7 +64,8 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 		}
 		const products = data.products
 		await request.server.db.insertFitnessOrder(order)
-		await request.server.db.insertFitnessOrderProducts(products, order.pedido_id)
+		const err = await request.server.db.insertFitnessOrderProducts(products, order.pedido_id)
+		console.log(err)
 		
 		if (data.payment_status === 'paid') {
 			const customerName = data.customer.name.split(' ')[0]
