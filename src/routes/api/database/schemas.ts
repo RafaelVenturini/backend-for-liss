@@ -57,7 +57,7 @@ export const PatchProductSchema = {
 		properties: {
 			date: {
 				type: "string",
-				examples: ["20/01/2022"],
+				examples: ["20/01/2026"],
 				minLength: 10,
 				maxLength: 10,
 			},
