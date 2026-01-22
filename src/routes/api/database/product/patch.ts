@@ -1,6 +1,7 @@
 import {RouteHandlerMethod} from "fastify";
 import {getProduct, getProductsByDate} from "@api/tiny/product.js";
 import {fixImgResult} from "@plugins/interface.js";
+import {sleep} from "@/lib/util/sleep.js";
 
 interface Tested {
 	updated: (number | string)[],
@@ -48,11 +49,7 @@ const patchProduct: RouteHandlerMethod = async (request, reply) => {
 					fixed: data.length - miss.length,
 				}
 			})
-		}
-			// else if (all) {
-			// 	return reply.status(501).send({error: 'Not implemented yet'})
-		// }
-		else {
+		} else {
 			const data = await getProductsByDate(date)
 			const ids = data.map(x => x.id)
 			let iterableIds: (number[] | string[]) | null = ids;
@@ -62,7 +59,11 @@ const patchProduct: RouteHandlerMethod = async (request, reply) => {
 				if (!iterableIds) return reply.status(404).send({error: 'No new products found'})
 				
 			}
+			
+			let i = 0
 			for (const id of iterableIds) {
+				i++
+				console.log(id, i, ids.length)
 				const data = await getProduct(id)
 				if (!data) {
 					tested.error.push({id, err: "not found", sku: ''});
@@ -75,6 +76,7 @@ const patchProduct: RouteHandlerMethod = async (request, reply) => {
 					sku: ""
 				})
 				
+				
 				const err = await reply.server.db.insertFitnessProduct(data.retorno.produto)
 				if (err) {
 					console.error(data.retorno.produto.codigo)
@@ -84,6 +86,7 @@ const patchProduct: RouteHandlerMethod = async (request, reply) => {
 						sku: data.retorno.produto.codigo
 					})
 				} else tested.updated.push(id)
+				if (all && ids.length > 30) await sleep(1000)
 			}
 			
 			return reply.status(201).send({data: tested})

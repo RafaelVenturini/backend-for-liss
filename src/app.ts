@@ -9,6 +9,8 @@ import database from "@plugins/database.js";
 import mailerPlugin from "@plugins/mailer.js";
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
 
 
 export function buildApp() {
@@ -42,6 +44,11 @@ export function buildApp() {
 	app.register(swaggerUi, {routePrefix: '/docs'})
 	app.register(database)
 	app.register(mailerPlugin)
+	app.register(fastifyStatic, {
+			root: path.join(process.cwd(), 'uploads'),
+			prefix: '/img/'
+		}
+	)
 	
 	app.addHook('onRequest', async (request: FastifyRequest) => {
 		request.startDate = new Date()
