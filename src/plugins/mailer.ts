@@ -5,7 +5,6 @@ import handlebars from 'handlebars';
 import fs from 'fs';
 import path from 'path';
 import {fitnessMailer, testMailer} from "@emails/emails.js";
-import {config} from "dotenv";
 import {appConfig} from "@config";
 
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
