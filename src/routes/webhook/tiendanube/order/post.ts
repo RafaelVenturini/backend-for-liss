@@ -71,7 +71,7 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 			const customerName = data.customer.name.split(' ')[0]
 			const orderNumber = data.number
 			const couponCode = `CB${customerName}${orderNumber}`
-			const discount = (Number(data.total) - Number(data.subtotal) * cashBack).toFixed(2)
+			const discount = ((Number(data.total) - Number(data.shipping_cost_customer)) * cashBack).toFixed(2)
 			const startDate = new Date()
 			const vality = calculateDate(new Date(), cashbackValityDays)
 			
@@ -81,6 +81,7 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 				startDate,
 				vality,
 			}
+
 			let couponSearch
 			let couponId
 			switch (event) {
