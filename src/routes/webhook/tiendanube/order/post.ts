@@ -83,7 +83,6 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 			}
 			let couponSearch
 			let couponId
-			
 			switch (event) {
 				case 'order/created':
 					await createCoupon(couponItens)

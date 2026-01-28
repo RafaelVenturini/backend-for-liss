@@ -4,10 +4,14 @@ import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
 import fs from 'fs';
 import path from 'path';
-import {fitnessMailer} from "@emails/emails.js";
+import {fitnessMailer, testMailer} from "@emails/emails.js";
+import {config} from "dotenv";
+import {appConfig} from "@config";
 
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
-	const transporter = nodemailer.createTransport(fitnessMailer);
+	let transporter
+		if(appConfig.env === 'prod') transporter = nodemailer.createTransport(fitnessMailer);
+		else transporter = nodemailer.createTransport(testMailer);
 	
 	const checkConnection = async (attempts = 0) => {
 		try {

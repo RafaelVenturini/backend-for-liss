@@ -21,8 +21,12 @@ const opt: Opt = {
 interface CouponItens {
   couponCode: string;
   discount: string;
-  startDate: string;
-  vality: Date;
+  startDate: string | Date;
+  vality: string | Date;
+}
+
+function formatCouponDate(x: string | Date){
+  return new Date(x).toISOString().split("T")[0];
 }
 
 function formatBody(couponItens: CouponItens) {
@@ -30,8 +34,8 @@ function formatBody(couponItens: CouponItens) {
     code: couponItens.couponCode,
     type: "absolute",
     value: Number(couponItens.discount),
-    start_date: couponItens.startDate.split("T")[0],
-    end_date: couponItens.vality.toISOString().split("T")[0],
+    start_date: formatCouponDate(couponItens.startDate),
+    end_date: formatCouponDate(couponItens.vality),
     max_uses: 1,
   });
 }
@@ -46,9 +50,6 @@ export async function getCoupon(id: number): Promise<Coupon[]> {
 export async function createCoupon(couponItens: CouponItens) {
   opt.method = "POST";
   opt.body = formatBody(couponItens);
-
-  console.log(opt);
-  console.log(url);
   const resp = await fetch(url, opt);
   return resp.json();
 }
