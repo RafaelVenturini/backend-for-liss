@@ -78,6 +78,7 @@ export interface GetProductsByDate {
 		pagina: string;
 		numero_paginas: number;
 		produtos: ByDateProducts[]
+		erros: TinyError[] | null
 	}
 }
 

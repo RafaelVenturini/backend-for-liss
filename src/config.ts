@@ -79,7 +79,7 @@ export const appConfig = {
   },
   tiny: {
     v2: {
-      token: process.env.TINY_TKN!,
+      token: process.env.TINY_FIT_TKN!,
     },
   },
   zuma: {

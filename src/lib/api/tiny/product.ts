@@ -21,7 +21,7 @@ export const getProductsByDate = async (date: string): Promise<MultiProduct[]> =
 	const linkPesquisa = `${linkv2}produtos.pesquisa.php${params}dataCriacao=${date}&pagina=${page}`;
 	const resp = await fetch(linkPesquisa)
 	const data: GetProductsByDate = await resp.json()
-	
+
 	dataProducts.push(...data.retorno.produtos.map(item => item.produto))
 	
 	if (data.retorno.numero_paginas > page) {

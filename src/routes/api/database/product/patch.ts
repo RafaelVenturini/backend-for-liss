@@ -63,7 +63,6 @@ const patchProduct: RouteHandlerMethod = async (request, reply) => {
 			let i = 0
 			for (const id of iterableIds) {
 				i++
-				console.log(id, i, ids.length)
 				const data = await getProduct(id)
 				if (!data) {
 					tested.error.push({id, err: "not found", sku: ''});
