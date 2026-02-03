@@ -1,8 +1,8 @@
 import {transporters} from "@emails/transporters.js";
 import {smtpStatus, TransporterKey} from "@emails/smtp-status.js";
 
-export function verifyAllTransporters() {
-    Promise.allSettled(
+export async function verifyAllTransporters() {
+    await Promise.allSettled(
         (Object.entries(transporters) as [TransporterKey, any][])
             .map(async ([key, transporter]) => {
                 try {

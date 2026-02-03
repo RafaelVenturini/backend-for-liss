@@ -2,13 +2,14 @@ import {RouteHandlerMethod} from "fastify";
 import {smtpStatus} from "@emails/smtp-status.js";
 
 const getEmailHealth: RouteHandlerMethod = async (_request, reply) => {
-    let code = 200
+    const hasError = Object.values(smtpStatus).some(
+        status => status !== "ok"
+    );
 
-
-    if (smtpStatus.fitness === "error") code = 500
-    if (smtpStatus.test === "error") code = 500
-
-    reply.status(code).send({details: smtpStatus})
+    reply.status(hasError ? 503 : 200).send({
+        status: hasError ? "unhealthy" : "healthy",
+        details: smtpStatus
+    });
 };
 
 export default getEmailHealth;
