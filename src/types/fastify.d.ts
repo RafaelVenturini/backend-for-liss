@@ -5,6 +5,7 @@ import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
 import {OneProduct} from "@api/tiny/interfaces.js";
 import {QueryResult} from "mysql2";
 import {InsertPrint, InsertReference} from "@/types/interface/fashion/product-creator.js";
+import {TransporterKey} from "@emails/smtp-status.js";
 
 declare module 'fastify' {
     interface FastifyRequest {
@@ -17,7 +18,7 @@ declare module 'fastify' {
 declare module 'fastify' {
     interface FastifyInstance {
         mailer: {
-            send: (templateName: string, subject: string, to: string, data: any) => Promise<any>
+            send: (templateName: string, subject: string, to: string, data: any, account: TransporterKey) => Promise<any>
         }
     }
 }
