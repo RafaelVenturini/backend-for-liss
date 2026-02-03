@@ -9,7 +9,9 @@ import {verifyAllTransporters} from "@emails/verify.js";
 import {transporters} from "@emails/transporters.js";
 
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
-    await verifyAllTransporters()
+    setImmediate(() => {
+        verifyAllTransporters()
+    })
     app.decorate("smtpStatus", smtpStatus)
 
     const sendEmail = async (templateName: string, subject: string, to: string, data: any, account: TransporterKey) => {
