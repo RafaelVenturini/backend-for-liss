@@ -9,7 +9,9 @@ import {verifyAllTransporters} from "@emails/verify.js";
 import {transporters} from "@emails/transporters.js";
 
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
-    await verifyAllTransporters()
+    verifyAllTransporters().catch(err => {
+        app.log.error(`Error while verifying transporters`, err);
+    })
 
     app.decorate("smtpStatus", smtpStatus)
 
