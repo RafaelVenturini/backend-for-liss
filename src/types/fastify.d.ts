@@ -52,6 +52,7 @@ declare module 'fastify' {
             selectLastColor: () => Promise<QueryResult | null>;
             insertLog: (req: FastifyRequest, rep: FastifyReply, error: any | null) => Promise<any>;
             selectNonCreated: (ids: string[]) => Promise<number[] | null>;
+            selectRepositionUsersToUpdate: (ids: string[]) => Promise<QueryResult>;
         };
     }
 }
