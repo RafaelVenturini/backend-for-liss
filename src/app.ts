@@ -21,19 +21,11 @@ export function buildApp() {
                 description: "Backend for liss"
             },
             tags: [
-                {
-                    name: 'Database',
-                    description: 'Relacionados a alterações no banco de dados'
-                },
+                {name: 'Database', description: 'Relacionados a alterações no banco de dados'},
                 {name: 'Tiny', description: 'Relacionados ao ERP Tiny'},
-                {
-                    name: 'Tiendanube',
-                    description: 'Relacionados à plataforma Nuvemshop'
-                },
-                {
-                    name: 'Zuma ERP',
-                    description: 'Relacionados ao ERP Zuma'
-                },
+                {name: 'Tiendanube', description: 'Relacionados à plataforma Nuvemshop'},
+                {name: 'Zuma ERP', description: 'Relacionados ao ERP Zuma'},
+                {name: 'Health', description: 'Testes para saber da procedencia do funcionamento do backend'}
             ]
         }
     })
@@ -41,12 +33,7 @@ export function buildApp() {
     app.register(swaggerUi, {routePrefix: '/docs'})
     app.register(database)
     app.register(mailerPlugin)
-    app.register(cronPlugin)
-    app.register(fastifyStatic, {
-            root: path.join(process.cwd(), 'uploads'),
-            prefix: '/img/'
-        }
-    )
+    app.register(fastifyStatic, {root: path.join(process.cwd(), 'uploads'), prefix: '/img/'})
 
     app.addHook('onRequest', async (request: FastifyRequest) => {
         request.startDate = new Date()
