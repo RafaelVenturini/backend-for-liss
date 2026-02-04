@@ -12,7 +12,7 @@ const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 
     const checkConnection = async (transporter: any, attempts = 0) => {
         if (!transporter) return
-        
+
         const email = transporter?.transporter?.options?.auth?.user
         try {
             console.log("Conectando no email: ", email);
@@ -21,7 +21,7 @@ const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
         } catch (err: any) {
             app.log.error(`Erro SMTP de ${email} (Tentativa ${attempts + 1}): ${err.message}`);
             if (attempts < 5) {
-                setTimeout(() => checkConnection(attempts + 1), 30000);
+                setTimeout(() => checkConnection(transporter, attempts + 1), 30000);
             }
         }
     };
