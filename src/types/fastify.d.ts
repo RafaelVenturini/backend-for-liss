@@ -5,7 +5,7 @@ import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
 import {OneProduct} from "@api/tiny/interfaces.js";
 import {QueryResult} from "mysql2";
 import {InsertPrint, InsertReference} from "@/types/interface/fashion/product-creator.js";
-import {TransporterKey} from "@emails/smtp-status.js";
+import {TransporterKey, TransporterStatus} from "@emails/smtp-status.js";
 
 declare module 'fastify' {
     interface FastifyRequest {
@@ -18,7 +18,8 @@ declare module 'fastify' {
 declare module 'fastify' {
     interface FastifyInstance {
         mailer: {
-            send: (templateName: string, subject: string, to: string, data: any, account: TransporterKey) => Promise<any>
+            send: (templateName: string, subject: string, to: string, data: any, account: TransporterKey) => Promise<any>;
+            status: TransporterStatus;
         }
     }
 }
@@ -51,6 +52,7 @@ declare module 'fastify' {
             selectLastColor: () => Promise<QueryResult | null>;
             insertLog: (req: FastifyRequest, rep: FastifyReply, error: any | null) => Promise<any>;
             selectNonCreated: (ids: string[]) => Promise<number[] | null>;
+            selectRepositionUsersToUpdate: (ids: string[]) => Promise<QueryResult>;
         };
     }
 }

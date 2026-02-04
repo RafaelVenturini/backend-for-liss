@@ -11,6 +11,7 @@ import {
     selectClothSql,
     selectLastColorSql,
     selectProductSql,
+    selectRepositionUsersToUpdateSql,
 } from "@/lib/database/fitness/product-sql.js";
 import {
     deleteOrderProductSql,
@@ -284,6 +285,11 @@ async function databasePlugin(fastify: FastifyInstance) {
         return rows.map((row) => row.id);
     };
 
+    const selectRepositionUsersToUpdate = async (ids: string[]) => {
+        const [rows] = await fitnessPool.execute(selectRepositionUsersToUpdateSql, ids)
+        return rows;
+    }
+
     ///
     /// Fashion Query's
     ///
@@ -404,6 +410,7 @@ async function databasePlugin(fastify: FastifyInstance) {
         selectLastColor,
         insertLog,
         selectNonCreated,
+        selectRepositionUsersToUpdate
     });
 
     fastify.addHook("onClose", async () => {

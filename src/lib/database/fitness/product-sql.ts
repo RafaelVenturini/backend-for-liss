@@ -6,7 +6,7 @@ export const insertProductSql = `
                         tec_id, tamanho, cor_id, mul_id, img)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ${onDuplicatedKeyUpdate(["nome", "sku", "preco", "blu_id",
-    "inf_id", "top_id", "tec_id", "tamanho", "cor_id", "mul_id", "img"])}
+                "inf_id", "top_id", "tec_id", "tamanho", "cor_id", "mul_id", "img"])}
 `
 
 export const selectProductSql = `
@@ -47,4 +47,13 @@ export const selectLastColorSql = `
     FROM cor
     ORDER BY id DESC
     LIMIT 1
+`
+
+export const selectRepositionUsersToUpdateSql = `
+    SELECT c.nuvem_id
+    FROM pedido p
+             JOIN liss_fitness.cliente c ON p.cliente_id = c.cliente_id
+    WHERE c.nuvem_id IN (?)
+    GROUP BY c.nuvem_id
+    HAVING DATEDIFF(NOW(), MAX(p.data_pedido)) > 15
 `
