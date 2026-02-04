@@ -11,12 +11,13 @@ const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
     const testTrans = nodemailer.createTransport(testMailer);
 
     const checkConnection = async (transporter: any, attempts = 0) => {
+        const email = transporter.transporter.options.auth.user
         try {
-            console.log(transporter)
+            console.log("Conectando no email: ", email);
             await transporter.verify();
-            app.log.info('SMTP Conectado e pronto para uso.');
+            app.log.info(`SMTP de ${email} Conectado e pronto para uso.`);
         } catch (err: any) {
-            app.log.error(`Erro SMTP (Tentativa ${attempts + 1}): ${err.message}`);
+            app.log.error(`Erro SMTP de ${email} (Tentativa ${attempts + 1}): ${err.message}`);
             if (attempts < 5) {
                 setTimeout(() => checkConnection(attempts + 1), 30000);
             }
