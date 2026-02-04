@@ -11,6 +11,8 @@ const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
     const testTrans = nodemailer.createTransport(testMailer);
 
     const checkConnection = async (transporter: any, attempts = 0) => {
+        if (!transporter) return
+        
         const email = transporter?.transporter?.options?.auth?.user
         try {
             console.log("Conectando no email: ", email);
