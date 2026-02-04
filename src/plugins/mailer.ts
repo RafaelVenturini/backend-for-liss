@@ -9,13 +9,21 @@ import {checkConnection} from "@emails/verify.js";
 
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 
-    const connectionChecks = Object.keys(transporters).map(key => checkConnection(key))
-    await Promise.allSettled(connectionChecks);
-    console.log("status de transporters: ", JSON.stringify(transportersStatus));
+    Object.keys(transporters).forEach(trans => {
+        checkConnection(trans).catch(err => {
+            console.error(`Falha ao conectar SMTP ${trans}:`, err);
+        });
+    });
 
     const sendEmail = async (templateName: string, subject: string, to: string, data: any, sender: TransporterKey) => {
         if (transportersStatus[sender] !== "ok") {
-            throw new Error(`Transporter ${sender} não está disponível`);
+            console.log(`Reconectando SMTP ${sender}...`);
+            await checkConnection(sender);
+
+            // @ts-ignore
+            if (transportersStatus[sender] !== "ok") {
+                throw new Error(`SMTP ${sender} indisponível`);
+            }
         }
         const filePath = path.join(process.cwd(), 'src', 'templates', 'emails', `${templateName}.html`);
         const source = fs.readFileSync(filePath, 'utf-8');
