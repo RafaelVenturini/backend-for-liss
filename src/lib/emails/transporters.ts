@@ -2,9 +2,15 @@ import nodemailer from "nodemailer";
 import {fitnessMailer, testMailer} from "@emails/emails.js";
 import {TransporterStatus} from "@emails/smtp-status.js";
 
+const transportConfig = {
+    logger: true,
+    debug: true,
+    requireTLS: true,
+}
+
 export const transporters = {
-    fitness: nodemailer.createTransport(fitnessMailer),
-    test: nodemailer.createTransport(testMailer),
+    fitness: nodemailer.createTransport({...fitnessMailer, ...transportConfig}),
+    test: nodemailer.createTransport({...testMailer, ...transportConfig}),
 }
 
 console.log('Configurações SMTP:', {
