@@ -9,11 +9,14 @@ import {checkConnection} from "@emails/verify.js";
 
 const mailerPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 
-    for (const trans in transporters) {
-        checkConnection(trans);
-    }
+    const connectionChecks = Object.keys(transporters).map(key => checkConnection(key))
+    await Promise.allSettled(connectionChecks);
+    console.log("status de transporters: ", JSON.stringify(transportersStatus));
 
     const sendEmail = async (templateName: string, subject: string, to: string, data: any, sender: TransporterKey) => {
+        if (transportersStatus[sender] !== "ok") {
+            throw new Error(`Transporter ${sender} não está disponível`);
+        }
         const filePath = path.join(process.cwd(), 'src', 'templates', 'emails', `${templateName}.html`);
         const source = fs.readFileSync(filePath, 'utf-8');
         const template = handlebars.compile(source);

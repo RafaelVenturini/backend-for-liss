@@ -7,6 +7,19 @@ export const transporters = {
     test: nodemailer.createTransport(testMailer),
 }
 
+console.log('Configurações SMTP:', {
+    fitness: {
+        host: fitnessMailer.host,
+        port: fitnessMailer.port,
+        secure: fitnessMailer.secure
+    },
+    test: {
+        host: testMailer.host,
+        port: testMailer.port,
+        secure: testMailer.secure
+    }
+});
+
 export const transportersStatus: TransporterStatus = {
     fitness: "unknown",
     test: "unknown",
