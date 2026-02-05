@@ -1,7 +1,7 @@
 import {RouteHandlerMethod} from "fastify";
 
 const getEmailHealth: RouteHandlerMethod = async (response, reply) => {
-    const data = response.server.mailer.status
+    const data = null
     reply.status(200).send({data})
 }
 
