@@ -24,7 +24,6 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
 
         if (data.payment_status === 'paid') {
             const {status, resp} = await couponManager(config)
-
             return reply.status(status).send({data: resp})
         }
 
