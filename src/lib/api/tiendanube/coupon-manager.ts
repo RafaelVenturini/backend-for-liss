@@ -9,7 +9,6 @@ import {sendEmail} from "@emails/send-email.js";
 interface Config {
     data: Order,
     event: string,
-    mailer: any,
     customer: ArrangedCustomer
     test?: boolean
 }
@@ -21,7 +20,7 @@ interface CouponItens {
     vality: Date
 }
 
-export async function couponManager({data, event, mailer, customer, test}: Config) {
+export async function couponManager({data, event, customer}: Config) {
     const customerName = data.customer.name.split(' ')[0]
     const orderNumber = data.number
     const couponCode = `CB${customerName}${orderNumber}`
@@ -49,7 +48,6 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
         })
     }
 
-    const emailType = test ? "test" : "fitness"
     let template = ""
     let title = ""
     let status
@@ -82,7 +80,6 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
             status = 204;
             resp = 'Coupon deleted successfully';
             break;
-        case 'order/updated':
         case 'order/edited':
             couponSearch = await getCoupon(orderNumber)
             if (couponSearch.length === 0 || !couponSearch[0].id) {
@@ -111,7 +108,8 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
         await sendEmail(template,
             title,
             customer.email,
-            emailObject,)
+            emailObject,
+            "fitness")
     }
 
     return {status, resp}

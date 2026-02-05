@@ -2,9 +2,7 @@ import './config.js'
 import fastify, {FastifyError, FastifyReply, FastifyRequest} from "fastify";
 import {registerRoutes} from "./routes/index.js";
 import database from "@plugins/database.js";
-import mailerPlugin from "@plugins/mailer.js";
 import swagger from '@fastify/swagger'
-import cronPlugin from "@plugins/cron.js"
 import swaggerUi from '@fastify/swagger-ui'
 import fastifyStatic from "@fastify/static";
 import path from "node:path";
@@ -32,7 +30,6 @@ export function buildApp() {
 
     app.register(swaggerUi, {routePrefix: '/docs'})
     app.register(database)
-    app.register(mailerPlugin)
     app.register(fastifyStatic, {root: path.join(process.cwd(), 'uploads'), prefix: '/img/'})
 
     app.addHook('onRequest', async (request: FastifyRequest) => {

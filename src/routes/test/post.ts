@@ -1,37 +1,23 @@
 import {RouteHandlerMethod} from "fastify";
-import {PutBucketPolicyCommand} from "@aws-sdk/client-s3";
-import {appConfig} from "@config";
+import {sendEmail} from "@emails/send-email.js";
+import {toBLR} from "@/lib/string/money.js";
 
-const postTest: RouteHandlerMethod = async (request, reply) => {
-	try {
-		const bucketName = "ergonomic-carton-rpr6omyp";
-		const policy = {
-			Version: "2012-10-17",
-			Statement: [
-				{
-					Effect: "Allow",
-					Principal: "*",
-					Action: "s3:GetObject",
-					Resource: `arn:aws:s3:::${bucketName}/*`
-				}
-			]
-		}
-		
-		const data = await appConfig.buckets.public.publicBucket.send(new PutBucketPolicyCommand({
-			Bucket: bucketName,
-			Policy: JSON.stringify(policy)
-		}))
-		return reply.status(201).send({data})
-	} catch (e: any) {
-		console.error("❌ Erro Detalhado:", {
-			name: e.name,       // Ex: 'AccessDenied', 'InvalidRequest's
-			message: e.message, // A mensagem explicativa
-			code: e.Code,       // O código de erro do S3
-			region: e.Region,
-			fault: e.$fault     // Se o erro foi no 'client' ou 'server'
-		});
-		return reply.status(500).send({error: e})
-	}
+const postTest: RouteHandlerMethod = async (_request, _reply) => {
+    const template = "new-coupon"
+    const subject = "Cupom de cashback exclusivo!"
+    const to = "rafaelventurinidipalma@gmail.com"
+    const data = {
+        discount: toBLR(420),
+        coupon: "GalinhaDaArvore",
+        vality: (new Date()).toLocaleDateString('pt-BR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+    }
+
+    const resp = await sendEmail(template, subject, to, data, "test")
+    console.log(resp)
 }
 
 export default postTest;

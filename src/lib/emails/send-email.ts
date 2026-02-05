@@ -3,7 +3,9 @@ import fs from "fs";
 import handlebars from "handlebars";
 import {appConfig} from "@config";
 
-export async function sendEmail(templateName: string, subject: string, to: string, data: any) {
+type FromOptions = "fitness" | "fashion" | "test"
+
+export async function sendEmail(templateName: string, subject: string, to: string, data: any, from: FromOptions) {
     const filePath = path.join(process.cwd(), 'src', 'templates', 'emails', `${templateName}.html`);
     const source = fs.readFileSync(filePath, 'utf-8');
     const template = handlebars.compile(source);
@@ -12,7 +14,7 @@ export async function sendEmail(templateName: string, subject: string, to: strin
 
     const opt = {
         method: 'POST',
-        body: JSON.stringify({html, subject, to}),
+        body: JSON.stringify({html, subject, to, from}),
     }
 
     const url = appConfig.env === "prod" ? "https://n8n.ialiss.com.br/webhook/send/email" : "https://n8n.ialiss.com.br/webhook-test/send/email"
