@@ -4,6 +4,7 @@ import {cashBack, cashbackValityDays} from "@/lib/util/busines-rules.js";
 import {createCoupon, deleteCoupon, getCoupon, updateCoupon} from "@api/tiendanube/coupon.js";
 import {toBLR} from "@/lib/string/money.js";
 import {ArrangedCustomer} from "@api/tiendanube/arrange-order.js";
+import {sendEmail} from "@emails/send-email.js";
 
 interface Config {
     data: Order,
@@ -107,12 +108,10 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
     }
 
     if (template) {
-        mailer.send(template,
+        await sendEmail(template,
             title,
             customer.email,
-            emailObject,
-            emailType
-        )
+            emailObject,)
     }
 
     return {status, resp}
