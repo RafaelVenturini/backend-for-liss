@@ -17,6 +17,8 @@ const postTest: RouteHandlerMethod = async (_request, _reply) => {
     }
 
     const resp = await sendEmail(template, subject, to, data, "test")
+
+
     console.log(resp)
 }
 
