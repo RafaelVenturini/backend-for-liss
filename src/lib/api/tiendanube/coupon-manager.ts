@@ -4,11 +4,11 @@ import {cashBack, cashbackValityDays} from "@/lib/util/busines-rules.js";
 import {createCoupon, deleteCoupon, getCoupon, updateCoupon} from "@api/tiendanube/coupon.js";
 import {toBLR} from "@/lib/string/money.js";
 import {ArrangedCustomer} from "@api/tiendanube/arrange-order.js";
+import {sendEmail} from "@emails/send-email.js";
 
 interface Config {
     data: Order,
     event: string,
-    mailer: any,
     customer: ArrangedCustomer
     test?: boolean
 }
@@ -20,7 +20,7 @@ interface CouponItens {
     vality: Date
 }
 
-export async function couponManager({data, event, mailer, customer, test}: Config) {
+export async function couponManager({data, event, customer}: Config) {
     const customerName = data.customer.name.split(' ')[0]
     const orderNumber = data.number
     const couponCode = `CB${customerName}${orderNumber}`
@@ -48,7 +48,6 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
         })
     }
 
-    const emailType = test ? "test" : "fitness"
     let template = ""
     let title = ""
     let status
@@ -81,7 +80,6 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
             status = 204;
             resp = 'Coupon deleted successfully';
             break;
-        case 'order/updated':
         case 'order/edited':
             couponSearch = await getCoupon(orderNumber)
             if (couponSearch.length === 0 || !couponSearch[0].id) {
@@ -107,12 +105,11 @@ export async function couponManager({data, event, mailer, customer, test}: Confi
     }
 
     if (template) {
-        mailer.send(template,
+        await sendEmail(template,
             title,
             customer.email,
             emailObject,
-            emailType
-        )
+            "fitness")
     }
 
     return {status, resp}
