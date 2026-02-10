@@ -100,8 +100,8 @@ export async function couponManager({data, event, customer}: Config) {
             resp = coupon;
             break;
         default:
-            status = 404;
-            resp = "error idk idc"
+            status = 204;
+            resp = "default case"
     }
 
     if (template) {
