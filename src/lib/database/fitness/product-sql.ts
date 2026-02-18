@@ -19,9 +19,7 @@ export const selectBrokenImgSql = `
     SELECT tiny_id
     FROM produto
     WHERE img IS NULL
-       OR img = ''
-       OR img = '[""]'
-       OR img = '[\'\']'
+       OR LENGTH(img) < 10
 `
 
 export const selectClothSql = `

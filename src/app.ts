@@ -20,10 +20,10 @@ export function buildApp() {
             },
             tags: [
                 {name: 'Database', description: 'Relacionados a alterações no banco de dados'},
-                {name: 'Tiny', description: 'Relacionados ao ERP Tiny'},
+                {name: 'Health', description: 'Testes para saber da procedencia do funcionamento do backend'},
                 {name: 'Tiendanube', description: 'Relacionados à plataforma Nuvemshop'},
+                {name: 'Tiny', description: 'Relacionados ao ERP Tiny'},
                 {name: 'Zuma ERP', description: 'Relacionados ao ERP Zuma'},
-                {name: 'Health', description: 'Testes para saber da procedencia do funcionamento do backend'}
             ]
         }
     })
