@@ -1,7 +1,6 @@
 import {RouteHandlerMethod} from "fastify";
 import {getOrder} from "@api/tiendanube/order.js";
 import {arrangeOrder} from "@api/tiendanube/arrange-order.js";
-import {couponManager} from "@api/tiendanube/coupon-manager.js";
 import {createRepositionUser, removeRepositionUser} from "@api/tiendanube/reposition.js";
 
 
@@ -21,15 +20,15 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
         const err = await request.server.db.insertFitnessOrderProducts(products, order.pedido_id)
         console.log(err)
 
-        const config = {data, event, customer, test}
 
         if (event === "order/paid" && Number(order.total) > 675) await createRepositionUser(customer.cliente_id)
         if (event === "order/cancelled" || Number(order.total) < 675) await removeRepositionUser(customer.cliente_id)
 
-        if (data.payment_status === 'paid') {
-            const {status, resp} = await couponManager(config)
-            return reply.status(status).send({data: resp})
-        }
+        // if (data.payment_status === 'paid') {
+        // const config = {data, event, customer, test}
+        //     const {status, resp} = await couponManager(config)
+        //     return reply.status(status).send({data: resp})
+        // }
 
         return reply.status(201).send({data: order})
     } catch (e) {
