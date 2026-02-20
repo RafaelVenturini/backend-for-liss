@@ -219,10 +219,7 @@ async function databasePlugin(fastify: FastifyInstance) {
         }
     };
 
-    const selectFitnessProduct = async (
-        tinyId: string | null,
-        sku: string | null,
-    ) => {
+    const selectFitnessProduct = async (tinyId: string | null, sku: string | null,) => {
         if (!tinyId && !sku) return null;
         if (!tinyId) tinyId = null;
         if (!sku) sku = null;

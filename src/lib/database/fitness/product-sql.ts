@@ -5,7 +5,7 @@ export const insertProductSql = `
                         top_id,
                         tec_id, tamanho, cor_id, mul_id, img)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ${onDuplicatedKeyUpdate(["nome", "sku", "preco", "blu_id",
+            ${onDuplicatedKeyUpdate(["tiny_id", "nome", "sku", "preco", "blu_id",
                 "inf_id", "top_id", "tec_id", "tamanho", "cor_id", "mul_id", "img"])}
 `
 

@@ -19,11 +19,16 @@ export function buildApp() {
                 description: "Backend for liss"
             },
             tags: [
+                {name: 'Argos - Fashion', description: 'Cadastramento de produtos no Moda'},
+                {name: 'Catalogo - Fitness', description: 'Ações para o Catalogo Fitness'},
                 {name: 'Database', description: 'Relacionados a alterações no banco de dados'},
+                {name: 'Front Utils', description: 'Coisas que podem beneficiar qualquer um dos frontends'},
                 {name: 'Health', description: 'Testes para saber da procedencia do funcionamento do backend'},
                 {name: 'Tiendanube', description: 'Relacionados à plataforma Nuvemshop'},
                 {name: 'Tiny', description: 'Relacionados ao ERP Tiny'},
                 {name: 'Zuma ERP', description: 'Relacionados ao ERP Zuma'},
+                {name: 'default', description: 'Preguiça imensa'},
+
             ]
         }
     })
