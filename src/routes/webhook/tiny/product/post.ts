@@ -22,7 +22,7 @@ const postProduct: RouteHandlerMethod = async (request, reply) => {
         if (!data) return reply.status(404).send({error: 'Product not found'})
         if (data.retorno.erros) return reply.status(400).send({error: data.retorno.erros.map(e => e.erro).join(', ')})
 
-        reply.server.db.insertFitnessProduct(data.retorno.produto)
+        reply.server.db.fitness.product.insert(data.retorno.produto)
 
         return reply.status(201).send({data: data.retorno.produto})
     } catch (e) {
