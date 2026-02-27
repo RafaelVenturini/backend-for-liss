@@ -1,12 +1,12 @@
 import {RouteHandlerMethod} from "fastify";
 
-const getCategorys: RouteHandlerMethod = async (request, reply) => {
+const getCloth: RouteHandlerMethod = async (request, reply) => {
     try {
-        const data = await request.server.db.fashion.selectReactCategorys()
+        const data = await request.server.db.fashion.product.selectReactCloths
         return reply.status(200).send({data})
     } catch (e) {
         return reply.status(500).send({error: e})
     }
 };
 
-export default getCategorys;
+export default getCloth;
