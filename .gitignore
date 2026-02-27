@@ -13,5 +13,6 @@ yarn-error.log*
 dist/
 
 .env
+.directory
 /.idea/
 small-test.ts
