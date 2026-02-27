@@ -1,5 +1,5 @@
 import {FastifyPluginAsync} from "fastify";
-import fashionRoutes from "@routes/argos/fashion/index.js";
+import fashionRoutes from "@routes/front-utils/argos/fashion/index.js";
 
 const argosRoutes: FastifyPluginAsync = async (app) => {
     app.register(fashionRoutes, {prefix: '/fashion'})
