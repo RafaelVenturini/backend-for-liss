@@ -47,16 +47,6 @@ const db_pass = process.env.DB_MYSQL_ADM_PASSW!;
 const db_host = process.env.DB_MYSQL_HOST!;
 const db_port = process.env.DB_MYSQL_PORT!;
 
-console.log(
-    db_user,
-    db_pass,
-    db_host,
-    db_port,
-    process.env.DB_MYSQL_SCHEMA_FIT,
-    process.env.DB_MYSQL_SCHEMA_FAS,
-    process.env.DB_MYSQL_SCHEMA_TOO
-)
-
 export const appConfig = {
     databases: {
         fitness: {
