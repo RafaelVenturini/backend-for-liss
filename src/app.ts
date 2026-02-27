@@ -2,6 +2,7 @@ import './config.js'
 import fastify, {FastifyError, FastifyReply, FastifyRequest} from "fastify";
 import {registerRoutes} from "./routes/index.js";
 import database from "@plugins/database.js";
+import cron from "@plugins/cron.js"
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import fastifyStatic from "@fastify/static";
@@ -19,6 +20,7 @@ export function buildApp() {
                 description: "Backend for liss"
             },
             tags: [
+                {name: 'Alterador - Fitness', description: 'Alterações no catálogo fitness'},
                 {name: 'Argos - Fashion', description: 'Cadastramento de produtos no Moda'},
                 {name: 'Catalogo - Fitness', description: 'Ações para o Catalogo Fitness'},
                 {name: 'Database', description: 'Relacionados a alterações no banco de dados'},
@@ -36,6 +38,7 @@ export function buildApp() {
     app.register(swaggerUi, {routePrefix: '/docs'})
     app.register(database)
     app.register(fastifyStatic, {root: path.join(process.cwd(), 'uploads'), prefix: '/img/'})
+    app.register(cron)
 
     app.addHook('onRequest', async (request: FastifyRequest) => {
         request.startDate = new Date()
