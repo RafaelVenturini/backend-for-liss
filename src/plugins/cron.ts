@@ -15,7 +15,7 @@ async function cronPlugin(fastify: FastifyInstance) {
     const refreshReposition = cron.schedule("0 0 * * * *", async () => {
         const data = await getRepositionUsers()
         const users = data.price_table.customers.map(x => x.id)
-        const select = await fastify.db.selectRepositionUsersToUpdate(users)
+        const select = await fastify.db.fitness.customer.selectReposition(users)
 
         // @ts-ignore
         for (const id of select) {
