@@ -45,9 +45,9 @@ export function buildApp() {
         return payload;
     });
 
-    app.addHook('onResponse', async (request: FastifyRequest, reply: FastifyReply) => {
-        const error = request.executionError || request.rawBody || null;
-        await app.db.insertLog(request, reply, error);
+    app.addHook('onResponse', async (req: FastifyRequest, rep: FastifyReply) => {
+        const error = req.executionError || req.rawBody || null;
+        await app.db.tool.logs.insert({req, rep, error, pool: app.db.pool.tool});
     });
 
     app.setErrorHandler(async (error: FastifyError, request, reply) => {

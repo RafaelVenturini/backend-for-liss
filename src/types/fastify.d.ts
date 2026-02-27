@@ -1,10 +1,8 @@
 import 'fastify';
 import {Pool} from "mysql2/promise";
-import {InsertFitAddress, InsertFitOrder, InsertFitUser} from "@plugins/interface.js";
-import {TiendanubeProduct} from "@api/tiendanube/interfaces.js";
-import {OneProduct} from "@api/tiny/interfaces.js";
-import {QueryResult} from "mysql2";
-import {InsertPrint, InsertReference} from "@/types/interface/fashion/product-creator.js";
+import {fitness} from "@/lib/database/fitness/_fitness-sql.js";
+import {tool} from "@/lib/database/tools/_tool.js";
+import {fashion} from "@/lib/database/fashion/_fashion.js";
 
 declare module 'fastify' {
     interface FastifyRequest {
@@ -17,32 +15,15 @@ declare module 'fastify' {
 declare module 'fastify' {
     interface FastifyInstance {
         db: {
-            fitness: Pool;
-            fashion: {
-                pool: Pool;
-                selectReactCategorys: () => Promise<any>;
-                selectReactReference: () => Promise<any>;
-                selectReactCloths: () => Promise<any>;
-                selectReactPrint: () => Promise<any>;
-                insertPrint: (item: InsertPrint) => Promise<any>;
-                insertReference: (item: InsertReference) => Promise<any>;
-                selectLastPrint: (hex: string | null) => Promise<any>;
+            pool: {
+                fitness: Pool;
+                fashion: Pool;
+                tool: Pool;
             };
-            tool: Pool;
+            fitness: ReturnType<typeof fitness>;
 
-            insertFitnessCustomer: (customer: InsertFitUser) => Promise<any>;
-            insertFitnessAddress: (address: InsertFitAddress) => Promise<any>;
-            insertFitnessOrder: (order: InsertFitOrder) => Promise<any>;
-            insertFitnessOrderProducts: (products: TiendanubeProduct[], pedido_id: number) => Promise<any>;
-            insertFitnessProduct: (product: OneProduct) => Promise<any>;
-            selectFitnessProduct: (tinyId: string | null, sku: string | null) => Promise<QueryResult | null>;
-            selectFitnessBrokenImg: () => Promise<QueryResult | null>;
-            selectFitnessCloths: () => Promise<QueryResult | null>;
-            insertFitnessColor: (name: string, sku: number) => Promise<any>;
-            selectLastColor: () => Promise<QueryResult | null>;
-            insertLog: (req: FastifyRequest, rep: FastifyReply, error: any | null) => Promise<any>;
-            selectNonCreated: (ids: string[]) => Promise<number[] | null>;
-            selectRepositionUsersToUpdate: (ids: string[]) => Promise<QueryResult>;
+            fashion: ReturnType<typeof fashion>;
+            tool: ReturnType<typeof tool>;
         };
     }
 }
