@@ -16,8 +16,8 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
         const {customer, order} = await arrangeOrder(data, request.server.db)
 
         const products = data.products
-        await request.server.db.insertFitnessOrder(order)
-        const err = await request.server.db.insertFitnessOrderProducts(products, order.pedido_id)
+        await request.server.db.fitness.order.insertOrder(order)
+        const err = await request.server.db.fitness.order.insertProducts(products, order.pedido_id)
         console.log(err)
 
 

@@ -5,10 +5,11 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/server.ts --port=3333",
     "build": "esbuild src/server.ts --bundle --platform=node --format=esm --target=node20 --outfile=dist/server.js --packages=external",
     "start": "node dist/server.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "linter": "npx tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.969.0",

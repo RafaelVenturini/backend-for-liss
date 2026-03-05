@@ -2,17 +2,13 @@ import "dotenv/config";
 import {S3Client} from "@aws-sdk/client-s3";
 
 const required = [
-    "DB_HOST",
-    "DB_PORT",
-    "DB_FIT_USER",
-    "DB_FIT_SHEMA",
-    "DB_FIT_PASSW",
-    "DB_FAS_USER",
-    "DB_FAS_SHEMA",
-    "DB_FAS_PASSW",
-    "DB_TOO_USER",
-    "DB_TOO_SHEMA",
-    "DB_TOO_PASSW",
+    "DB_MYSQL_ADM_PASSW",
+    "DB_MYSQL_ADM_USER",
+    "DB_MYSQL_HOST",
+    "DB_MYSQL_PORT",
+    "DB_MYSQL_SCHEMA_FAS",
+    "DB_MYSQL_SCHEMA_FIT",
+    "DB_MYSQL_SCHEMA_TOO",
     "NVSHP_AUTH",
     "NVSHP_USER",
     "NVSHP_SHOP",
@@ -46,28 +42,33 @@ const publicBucket = new S3Client({
     },
 });
 
+const db_user = process.env.DB_MYSQL_ADM_USER!;
+const db_pass = process.env.DB_MYSQL_ADM_PASSW!;
+const db_host = process.env.DB_MYSQL_HOST!;
+const db_port = process.env.DB_MYSQL_PORT!;
+
 export const appConfig = {
     databases: {
         fitness: {
-            host: process.env.DB_HOST!,
-            port: Number(process.env.DB_PORT!),
-            user: process.env.DB_FIT_USER!,
-            database: process.env.DB_FIT_SHEMA!,
-            password: process.env.DB_FIT_PASSW!,
+            host: db_host,
+            port: Number(db_port),
+            user: db_user,
+            database: process.env.DB_MYSQL_SCHEMA_FIT!,
+            password: db_pass,
         },
         fashion: {
-            host: process.env.DB_HOST!,
-            port: Number(process.env.DB_PORT!),
-            user: process.env.DB_FAS_USER!,
-            database: process.env.DB_FAS_SHEMA!,
-            password: process.env.DB_FAS_PASSW!,
+            host: db_host,
+            port: Number(db_port),
+            user: db_user,
+            database: process.env.DB_MYSQL_SCHEMA_FAS!,
+            password: db_pass,
         },
         tools: {
-            host: process.env.DB_HOST!,
-            port: Number(process.env.DB_PORT!),
-            user: process.env.DB_TOO_USER!,
-            database: process.env.DB_TOO_SHEMA!,
-            password: process.env.DB_TOO_PASSW!,
+            host: db_host,
+            port: Number(db_port),
+            user: db_user,
+            database: process.env.DB_MYSQL_SCHEMA_TOO!,
+            password: db_pass,
         },
     },
     nuvemshop: {
