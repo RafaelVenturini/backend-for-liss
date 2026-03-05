@@ -12,7 +12,7 @@ import cors from "@fastify/cors";
 export function buildApp() {
     const app = fastify({logger: true});
     app.register(cors, {
-        origin: '*'
+        origin: ['https://liss-whatsapp-changer.up.railway.app']
     })
 
     app.register(swagger, {
