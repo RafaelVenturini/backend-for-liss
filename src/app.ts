@@ -11,6 +11,9 @@ import cors from "@fastify/cors";
 
 export function buildApp() {
     const app = fastify({logger: true});
+    app.register(cors, {
+        origin: ['https://liss-whatsapp-changer.up.railway.app/']
+    })
 
     app.register(swagger, {
         openapi: {
@@ -35,9 +38,7 @@ export function buildApp() {
         }
     })
 
-    app.register(cors, {
-        origin: ['https://liss-whatsapp-changer.up.railway.app/']
-    })
+
     app.register(swaggerUi, {routePrefix: '/docs'})
     app.register(database)
     app.register(fastifyStatic, {root: path.join(process.cwd(), 'uploads'), prefix: '/img/'})
