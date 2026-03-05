@@ -1,13 +1,15 @@
 import {RouteHandlerMethod} from "fastify";
+import {invalidateFitness} from "@/lib/util/cache/invalidate-fitness.js";
+
+interface Body {
+    whatsapp: boolean
+}
 
 const patchCache: RouteHandlerMethod = async (request, reply) => {
-    const links = ["catalogomoda.com.br", "suamoda.online", "catalogofitness.com", "pricefull-lavi-fitness-production.up.railway.app",]
-    const cachePath = "/api/server/invalidar-cache"
-    for (const link of links) {
-        await fetch(link + cachePath)
-    }
+    const {whatsapp} = request.body as Body
+    await invalidateFitness(whatsapp)
 
-    return reply.status(204).send({})
+    return reply.status(204).send()
 }
 
 export default patchCache;

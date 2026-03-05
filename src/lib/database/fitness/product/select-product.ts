@@ -14,3 +14,4 @@ export const selectProduct = async (
 
     return rows;
 };
+

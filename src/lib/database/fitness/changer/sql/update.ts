@@ -1,15 +1,20 @@
-export const updateIdSql = `
-    UPDATE ?
-    SET ?
+export const updateIdSql = (table: 'catalogo' | 'vitrine') => `
+    UPDATE ${table}
+    SET estoque   = ?,
+        novidade  = ?,
+        destaque  = ?,
+        reposicao = ?
     WHERE produto_id = ?
 `;
 
-export const updateSaleSql = (sku: string) => `
+export const updateSaleSql = `
     UPDATE produto
     SET promocao = ?
-    WHERE sku LIKE "${sku}%"`;
+    WHERE prod_id IN (?)
+`
 
-export const updatePrioritySql = (sku: string) => `
-    UPDATE ?
-    SET prioridade = ?
-    WHERE sku LIKE "${sku}%"`;
+export const updatePrioritySql = (table: 'catalogo' | 'vitrine') => `
+    UPDATE ${table} t
+    SET t.prioridade = ?
+    WHERE produto_id IN (?)
+`

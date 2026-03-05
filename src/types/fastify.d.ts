@@ -21,7 +21,6 @@ declare module 'fastify' {
                 tool: Pool;
             };
             fitness: ReturnType<typeof fitness>;
-
             fashion: ReturnType<typeof fashion>;
             tool: ReturnType<typeof tool>;
         };

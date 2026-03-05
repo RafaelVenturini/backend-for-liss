@@ -7,11 +7,13 @@ import {selectLastColor} from "@/lib/database/fitness/product/select-last-color.
 import {selectNew} from "@/lib/database/fitness/product/select-new.js";
 import {Pool} from "mysql2/promise";
 import {OneProduct} from "@api/tiny/interfaces.js";
+import {selectTinyId} from "@/lib/database/fitness/product/select-tiny-id.js";
 
 
 export const querysProducts = (pool: Pool) => ({
     insert: (product: OneProduct) => insertProduct(product, pool),
     select: (tinyId: string | null, sku: string | null) => selectProduct(tinyId, sku, pool),
+    selectTinyId: (color: number) => selectTinyId(color, pool),
     selectBrokenImg: () => selectBrokenImg(pool),
     selectCloths: () => selectCloths(pool),
     insertFitnessColor: (name: string, sku: number) => insertFitnessColor(name, sku, pool),

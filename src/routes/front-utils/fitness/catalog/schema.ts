@@ -41,20 +41,15 @@ export const FitCatalogListSchema = {
 
 export const FitCatalogCacheSchema = {
     tags: ['Catalogo - Fitness'],
+    body: {
+        type: "object",
+        properties: {
+            whatsapp: {type: "boolean"},
+        },
+    },
     response: {
         204: {},
         400: errorSchemas.badRequest,
-        404: errorSchemas.notFound,
-        500: errorSchemas.internalError,
-    }
-}
-
-export const GetFitChangerSchema = {
-    tags: ['Alterador - Fitness'],
-    response: {
-        200: {},
-        400: errorSchemas.badRequest,
-        404: errorSchemas.notFound,
         500: errorSchemas.internalError,
     }
 }
