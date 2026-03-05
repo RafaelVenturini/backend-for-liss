@@ -7,7 +7,7 @@ import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import fastifyStatic from "@fastify/static";
 import path from "node:path";
-
+import cors from "@fastify/cors";
 
 export function buildApp() {
     const app = fastify({logger: true});
@@ -35,6 +35,9 @@ export function buildApp() {
         }
     })
 
+    app.register(cors, {
+        origin: ['https://liss-whatsapp-changer.up.railway.app/']
+    })
     app.register(swaggerUi, {routePrefix: '/docs'})
     app.register(database)
     app.register(fastifyStatic, {root: path.join(process.cwd(), 'uploads'), prefix: '/img/'})
