@@ -30,7 +30,6 @@ export function buildApp() {
                 {name: 'Tiny', description: 'Relacionados ao ERP Tiny'},
                 {name: 'Zuma ERP', description: 'Relacionados ao ERP Zuma'},
                 {name: 'default', description: 'Preguiça imensa'},
-
             ]
         }
     })
