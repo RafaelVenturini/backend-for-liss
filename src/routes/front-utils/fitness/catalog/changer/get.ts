@@ -1,5 +1,6 @@
 import {RouteHandlerMethod} from "fastify";
 import {skuWithoutColor} from "@/lib/string/sku-creation.js";
+import {reduceLink} from "@/lib/string/tiny-images.js";
 
 interface Changer {
     sku: string;
@@ -36,7 +37,7 @@ const getChanger: RouteHandlerMethod = async (request, reply) => {
             newer: product.novidade,
             reposition: product.reposicao,
             highlight: product.destaque,
-            img: JSON.parse(product.img)[0],
+            img: reduceLink(JSON.parse(product.img)[0]),
         };
 
         const sku = skuWithoutColor(product.sku, product.name);

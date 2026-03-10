@@ -1,4 +1,5 @@
 import {Order} from "@api/tiendanube/interfaces.js";
+import {FastifyRequest} from "fastify";
 
 export interface ArrangedCustomer {
     cliente_id: string;
@@ -9,7 +10,7 @@ export interface ArrangedCustomer {
     nuvem_id: number;
 }
 
-export async function arrangeOrder(x: Order, database: any) {
+export async function arrangeOrder(x: Order, request: FastifyRequest) {
     const customer = {
         cliente_id: x.customer.identification,
         nome: x.customer.name,
@@ -31,7 +32,7 @@ export async function arrangeOrder(x: Order, database: any) {
         pais: x.customer.default_address.country,
         criacao: x.customer.default_address.created_at,
     }
-    const addressId = await database.insertFitnessAddress(address)
+    const addressId = await request.server.db.fitness.address.insert(address)
 
     const order = {
         pedido_id: x.number,
