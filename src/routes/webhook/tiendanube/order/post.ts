@@ -5,7 +5,7 @@ import {createRepositionUser, removeRepositionUser} from "@api/tiendanube/reposi
 
 
 const postOrder: RouteHandlerMethod = async (request, reply) => {
-    const {id, event, test} = request.body as any
+    const {id, event} = request.body as any
 
     try {
         const data = await getOrder(id)
@@ -13,7 +13,7 @@ const postOrder: RouteHandlerMethod = async (request, reply) => {
             {success: false, error: 'Order not found'}
         )
 
-        const {customer, order} = await arrangeOrder(data, request.server.db)
+        const {customer, order} = await arrangeOrder(data, request)
 
         const products = data.products
         await request.server.db.fitness.order.insertOrder(order)
